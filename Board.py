@@ -14,7 +14,7 @@ class Board():
         for height in reversed(range(max_columns2)):
             for column in self.columns2:
                 if len(column) > height:
-                    s += f" {column[height].health_left}{column[height].faction[:2]}{column[height].health} "
+                    s += f" {column[height]} "
                 else:
                     s += '      '
             s += '\n'
@@ -23,7 +23,7 @@ class Board():
         for height in range(max_columns1):
             for column in self.columns1:
                 if len(column) > height:
-                    s += f" {column[height].health_left}{column[height].faction[:2]}{column[height].health} "
+                    s += f" {column[height]} "
                 else:
                     s += '      '
             s += '\n'
@@ -44,6 +44,7 @@ class Board():
 class BoardTest(Board):
     def __init__(self) -> None:
         super().__init__()
+        self.place_card(Card(7, 'Luz'), 1)
         self.place_card(Card(7, 'Fuego'), 1)
         self.place_card(Card(6, 'Fuego'), 2)
         self.place_card(Card(7, 'Agua'), 2)
@@ -67,4 +68,10 @@ if __name__ == '__main__':
     card: Card = board.columns1[2][0] 
     card.activate(board.columns1, board.columns2)
     card.activate(board.columns1, board.columns2)
+    card2: Card = board.columns1[1][0]
+    card2.activate(board.columns1, board.columns2, (2, 1))
+    card3: Card = board.columns1[2][1]
+    print(board)
+    card3.activate(board.columns1, board.columns2, 3)
+    print(card3.position, card3.column)
     print(board)
