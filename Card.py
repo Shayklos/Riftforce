@@ -2,6 +2,17 @@ from random import choice,choices
 from Effect import *
 
 FACTIONS = ('Agua', 'Fuego', 'Luz', 'Planta', 'Aire')
+FACTION_EMOJI = {'Agua' : '💧',
+                 'Planta':'🍀',
+                 'Rayo' :'⚡',
+                 'Aire': '☁',
+                 'Hielo':'❄',
+                 'Tierra':'🟤',
+                 'Luz':'💡',
+                 'Cristal':'💎',
+                 'Fuego':'🔥',
+                 'Sombra':'🌑'
+}
 
 class Card():
     def random(placed = True):
@@ -24,7 +35,7 @@ class Card():
         self.position = None
 
     def __str__(self) -> str:
-        return f"{self.faction}: {self.health_left}/{self.health}"
+        return f"{self.health_left}{FACTION_EMOJI[self.faction]}{self.health}"
     
     def __repr__(self) -> str:
         return f"{self.faction}: {self.health_left}/{self.health}"
@@ -33,6 +44,10 @@ class Card():
         match self.faction:
             case 'Fuego':
                 effect = Fire
+            case 'Luz':
+                effect = Light    
+            case 'Agua':
+                effect = Water
 
         effect(self, columns, columns_opponent, specific_parameters).activate()
 
