@@ -1,6 +1,8 @@
+from __future__ import annotations
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from Card import Card
+    from Player import Player
 
 from colorama import Fore
 import logging
@@ -18,11 +20,13 @@ def exists(list, i):
     return True
 
 class Effect():
-    def __init__(self, card, columns, columns_opponent, specific_parameters = []) -> None:
+    def __init__(self, card, owner: Player) -> None:
         self.card: Card = card
-        self.columns: list[list[Card]] = columns
-        self.columns_opponent = columns_opponent 
-        self.specific_parameters = specific_parameters
+        self.columns: list[list[Card]] = owner.columns
+        self.columns_opponent = owner.columns_opponent 
+
+    def on_placement(self): return 
+    def on_death(self): return
 
     def deal_damage(self, amount, relative_column = 0, where = 0, opponent = True):
         columns = self.columns_opponent if opponent else self.columns
@@ -34,9 +38,12 @@ class Effect():
 
         if columns[self.card.column + relative_column][where].health_left <= 0:                                              #If card was destroyed
             logging.debug(Fore.MAGENTA + f"{columns[self.card.column + relative_column][where]}" + Fore.WHITE)
-            columns[self.card.column + relative_column].pop(columns[self.card.column + relative_column][where].position)     #remove it from the column
+            destroyed_card = columns[self.card.column + relative_column]\
+                                .pop(columns[self.card.column + relative_column][where].position)                           #remove it from the column
             for card in columns[self.card.column + relative_column][where:]:                                                 #and adjust cards above it 
                 card.position -= 1                                                                                           #to one position below
+
+
 
     def heal(self, placement, amount = 1):
         column, where = placement
@@ -58,30 +65,86 @@ class Effect():
 
 
 class Fire(Effect):
-    def __init__(self, card, columns, columns_opponent, specific_parameters = []) -> None:
-        super().__init__(card, columns, columns_opponent, specific_parameters)
+    def __init__(self, card, columns, columns_opponent) -> None:
+        super().__init__(card, columns, columns_opponent)
 
-    def activate(self):
+    def activate(self, specific_parameters = None):
         self.deal_damage(3)
         self.deal_damage(1, where = self.card.position + 1, opponent=False)
 
 
 class Light(Effect):
-    #Special parameter: heal position
-    def __init__(self, card, columns, columns_opponent, specific_parameters = []) -> None:
-        super().__init__(card, columns, columns_opponent, specific_parameters)
+    #Specific parameter: heal position
+    def __init__(self, card, columns, columns_opponent) -> None:
+        super().__init__(card, columns, columns_opponent)
 
-    def activate(self):
+    def activate(self, specific_parameters = None):
         self.deal_damage(2)
-        self.heal(self.specific_parameters)
+        self.heal(specific_parameters)
 
 
 class Water(Effect):
-    def __init__(self, card, columns, columns_opponent, specific_parameters = []) -> None:
-        super().__init__(card, columns, columns_opponent, specific_parameters)
+    def __init__(self, card, columns, columns_opponent) -> None:
+        super().__init__(card, columns, columns_opponent)
 
-    def activate(self):
+    def activate(self, specific_parameters = None):
         self.deal_damage(2)
 
-        self.move(self.specific_parameters)
+        self.move(specific_parameters)
         self.deal_damage(1)
+
+
+class Plant(Effect):
+    def __init__(self, card, columns, columns_opponent) -> None:
+        super().__init__(card, columns, columns_opponent)
+
+    def activate(self, specific_parameters = None):
+        pass
+
+
+class Air(Effect):
+    def __init__(self, card, columns, columns_opponent) -> None:
+        super().__init__(card, columns, columns_opponent)
+
+    def activate(self, specific_parameters = None):
+        pass
+
+
+class Thunderbolt(Effect):
+    def __init__(self, card, columns, columns_opponent) -> None:
+        super().__init__(card, columns, columns_opponent)
+
+    def activate(self, specific_parameters = None):
+        pass
+
+
+class Ice(Effect):
+    def __init__(self, card, columns, columns_opponent) -> None:
+        super().__init__(card, columns, columns_opponent)
+
+    def activate(self, specific_parameters = None):
+        pass
+
+
+class Earth(Effect):
+    def __init__(self, card, columns, columns_opponent) -> None:
+        super().__init__(card, columns, columns_opponent)
+
+    def activate(self, specific_parameters = None):
+        pass
+
+
+class Crystal(Effect):
+    def __init__(self, card, columns, columns_opponent) -> None:
+        super().__init__(card, columns, columns_opponent)
+
+    def activate(self, specific_parameters = None):
+        pass
+
+
+class Shadow(Effect):
+    def __init__(self, card, columns, columns_opponent) -> None:
+        super().__init__(card, columns, columns_opponent)
+
+    def activate(self, specific_parameters = None):
+        pass

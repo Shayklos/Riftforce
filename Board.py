@@ -2,9 +2,9 @@ from Card import Card
 from colorama import Fore
 
 class Board():
-    def __init__(self) -> None:
-        self.columns1 = [[],[],[],[],[]]
-        self.columns2 = [[],[],[],[],[]]
+    def __init__(self, columns1, columns2) -> None:
+        self.columns1 = columns1
+        self.columns2 = columns2
 
     def __str__(self) -> str:
         max_columns1 = max((len(column) for column in self.columns1))

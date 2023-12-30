@@ -1,12 +1,15 @@
 from Faction import Faction
 from random import shuffle
-
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from Player import Player
 
 class Deck():
-    def __init__(self, factions) -> None:
+    def __init__(self, factions, owner) -> None:
+        # self.owner: Player = owner
         self.list: list = []
         for faction in factions:
-            self.list += Faction(faction).cards
+            self.list += Faction(faction, owner).cards
 
         self.shuffle()
 

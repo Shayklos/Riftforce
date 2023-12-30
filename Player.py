@@ -1,17 +1,23 @@
 from Deck import Deck
 from Card import Card
 from time import perf_counter
+from Board import Board
 
 FACTIONS = {'Agua', 'Fuego', 'Luz', 'Planta', 'Aire'}
 
 class Player():
     def __init__(self, factions) -> None:
-        self.deck = Deck(factions)
-
+        self.deck = Deck(factions, self)
         self.discard_pile = []
         self.hand = []
         self.columns = [[], [], [], [], []]
         self.columns_opponent = [[], [], [], [], []]
+        self.score = 0
+
+
+    def generateBoard(self):
+        self.board = Board(self.columns, self.columns_opponent)
+    
 
     def draw(self):
         while len(self.hand) < 7:
@@ -58,8 +64,10 @@ class Player():
             raise Exception("Wrong play")
 
         for card, placement in zip(cards, placements):
+            card.position = len(self.columns[placement])
+            card.column = placement
             self.columns[placement].append(card)
-
+            card.on_placement()
 
     def discard_from_hand(self, cards):
         for card in cards:
