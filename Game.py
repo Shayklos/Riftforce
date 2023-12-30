@@ -16,7 +16,7 @@ if __name__ == '__main__':
     game.player1.draw()
     game.player1.sort_hand()
     print(game.player1.hand[:3])
-    game.player1.play(game.player1.hand[:3], (3,1,2), game.board.columns1)
+    game.player1._play(game.player1.hand[:3], (3,1,2), game.board.columns1)
     print(game.board)
 
 

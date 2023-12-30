@@ -1,6 +1,16 @@
 from Card import Card
 
 class Faction():
+    HEALTH_LOW = 5
+    HEALTH_MID = 6
+    HEALTH_HIGH = 7
+
+    NUM_LOW = 4
+    NUM_MID = 3
+    NUM_HIGH = 2
+
     def __init__(self, faction) -> None:
-        self.cards = 4*[Card(5, faction)] + 3*[Card(6, faction)] + 2*[Card(7, faction)]
+        self.cards =  Faction.NUM_LOW*[Card(Faction.HEALTH_LOW, faction)]                   \
+                    + Faction.NUM_MID*[Card(Faction.HEALTH_MID, faction)]                   \
+                    + Faction.NUM_HIGH*[Card(Faction.HEALTH_HIGH, faction)]                 
 
