@@ -1,4 +1,5 @@
 from Deck import Deck
+from Card import Card
 from time import perf_counter
 
 FACTIONS = {'Agua', 'Fuego', 'Luz', 'Planta', 'Aire'}
@@ -9,7 +10,8 @@ class Player():
 
         self.discard_pile = []
         self.hand = []
-
+        self.columns = [[], [], [], [], []]
+        self.columns_opponent = [[], [], [], [], []]
 
     def draw(self):
         while len(self.hand) < 7:
@@ -20,7 +22,7 @@ class Player():
         self.hand.sort(key = lambda card : (card.health, card.faction))
 
 
-    def play_placements_are_correct(self, cards, placements):
+    def play_placements_are_correct(self, cards: list[Card], placements: list) -> bool: 
         #Check cards are valid
         if len(cards) > 3:
             print("Como mucho puedes jugar tres cartas en un turno.")
@@ -50,12 +52,13 @@ class Player():
 
         return True
 
-    def _play(self, cards, placements, columns):
+
+    def _play(self, cards: list[Card], placements: list):
         if not self.play_placements_are_correct(cards, placements):
             raise Exception("Wrong play")
 
         for card, placement in zip(cards, placements):
-            columns[placement].append(card)
+            self.columns[placement].append(card)
 
 
     def discard_from_hand(self, cards):
@@ -64,9 +67,40 @@ class Player():
             self.discard_pile.append(card)
 
 
-    def play_and_discard(self, cards, placements, columns):
-        self._play(cards, placements, columns)
+    def play_and_discard(self, cards, placements):
+        self._play(cards, placements)
         self.discard_from_hand(cards)
+
+
+    def activate_placements_are_correct(self, discarded_card: Card, cards: list[Card]) -> bool: 
+
+        #Check number of cards is valid
+        if len(cards) > 3:
+            print("Como mucho puedes activar tres cartas en un turno.")
+            return False
+
+        health = {card.health for card in cards}
+        if health != {discarded_card.health}:
+            faction = {card.faction for card in cards}
+            if faction != {discarded_card.faction}:
+                print("Las cartas deben de ser todas de la misma facción que la carta descartada o todas del mismo número que la carta descartada")
+                return False
+        return True
+
+    def _activate(self, discarded_card: Card, placements: list[list], activateparams):
+        cards: list[Card] = []
+        for column, placement in placements:
+            cards.append(self.columns[column][placement])
+
+        if not self.activate_placements_are_correct(discarded_card, cards):
+            raise Exception("Wrong activate")
+        
+        for card, parameters in zip(cards, activateparams):
+            card.activate(parameters, self.columns, self.columns_opponent)
+
+        self.discard_from_hand(discarded_card)
+        
+        
 
 
 
@@ -80,4 +114,3 @@ if __name__ == '__main__':
     print(player.hand[:3])
     player.play_and_discard(player.hand[:3], (1,2,3), [[],[],[],[],[]])
     print(player.hand)
-
