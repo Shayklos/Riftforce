@@ -14,6 +14,9 @@ class Game():
         self.board = Board(self.player1, self.player2)
         self.isPlayer1Turn = True #True -> player1, False -> player2
 
+    def __str__(self) -> str:
+        return f"[Player 1] {self.player1.score} - {self.player2.score} [Player 2]\n{self.board}"
+
     def link_players(self):
         self.player1.columns = self.player2.columns_opponent
         self.player1.columns_opponent = self.player2.columns
@@ -32,14 +35,14 @@ if __name__ == '__main__':
     # board.place_card(Card(7, 'Agua', player1), 2)
     # board.place_card(Card(5, 'Fuego', player1), 3)
 
-    board.place_card(Card(5, 'Luz', player2), 1, opponent = True)
-    board.place_card(Card(6, 'Tierra', player2), 2, opponent = True)
-    board.place_card(Card(5,  'Planta', player2), 2, opponent = True)
-    board.place_card(Card(7, 'Tierra', player2), 3, opponent = True)
-    board.place_card(Card(5, 'Luz', player2), 0, opponent = True)
-    board.place_card(Card(7, 'Tierra', player2), 2, opponent = True)
-    board.place_card(Card(5,  'Planta', player2), 4, opponent = True)
-    board.place_card(Card(5, 'Tierra', player2), 3, opponent = True)
+    # board.place_card(Card(5, 'Luz', player2), 1)
+    board.place_card(Card(6, 'Tierra', player2), 2)
+    # board.place_card(Card(5,  'Planta', player2), 2)
+    # board.place_card(Card(7, 'Tierra', player2), 3)
+    # board.place_card(Card(5, 'Luz', player2), 0)
+    # board.place_card(Card(7, 'Tierra', player2), 2)
+    # board.place_card(Card(5,  'Planta', player2), 4)
+    # board.place_card(Card(5, 'Tierra', player2), 3)
 
     # print(board)
     # card: Card = board.columns1[2][0] 
@@ -51,12 +54,19 @@ if __name__ == '__main__':
     # card3.activate(3)
     # print(card3.position, card3.column)
     # print(board)
-    game.player1.draw()
-    game.player1.sort_hand()
-    print("hand", game.player1.hand)
-    game.player1._play(game.player1.hand[:3], (1,2,3))
-    card_earth = Card(5, 'Tierra', player1)
-    board.place_card(card_earth, 3)
-    print(game.board)
+    # game.player1.draw()
+    # game.player1.sort_hand()
+    # print("hand", game.player1.hand)
+    # game.player1._play(game.player1.hand[:3], (1,2,3))
+    # card_earth = Card(5, 'Tierra', player1)
+    enemy_card = Card(7, 'Fuego', player2)
+    card_plant = Card(6, 'Planta', player1)
+    # board.place_card(card_earth, 3)
+    board.place_card(enemy_card, 3)
+    board.place_card(card_plant, 2)
+    card_plant.activate(3)
+    enemy_card.activate()
+    print(game)
+
 
 
