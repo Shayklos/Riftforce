@@ -95,7 +95,7 @@ class Effect():
         
         #Update card placement
         card.column = column_destination
-        card.position = len(self.owner.columns[column_destination]) - 1 
+        card.position = len(columns[column_destination]) - 1 
 
 
 class Fire(Effect):
