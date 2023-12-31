@@ -37,6 +37,7 @@ class Card():
         self.health: int = health
         self.health_left: int = health
         self.faction: str = faction
+        assert faction in FACTIONS
         self.column: int | None = None
         self.position: int | None = None
         self.effect: Effect = self.getEffect()
@@ -63,7 +64,7 @@ class Card():
             case 'Sombra': effect = Shadow
         return effect(self, self.owner)
 
-    def activate(self, specific_parameters = []): self.effect.activate(specific_parameters)
+    def activate(self, specific_parameters = None): self.effect.activate(specific_parameters)
     def on_placement(self): self.effect.on_placement()
     def on_death(self): self.effect.on_death()
     def on_kill(self): self.effect.on_kill()

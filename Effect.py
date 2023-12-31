@@ -23,6 +23,7 @@ class Effect():
     def __init__(self, card, owner: Player) -> None:
         self.card: Card = card
         self.owner: Player = owner
+        self.has_killed = False
 
     def on_placement(self): return 
     def on_death(self): self.owner.opponents_score += 1
@@ -35,7 +36,7 @@ class Effect():
 
         #Check if there is a card in the given position
         if not inRange(self.card.column + relative_column) or not exists(columns[self.card.column + relative_column], where):
-            logging.warning(Fore.RED + f"Daño fuera de rango, amount:{amount}, relative_column:{relative_column}, self.card.column:{self.card.column}, where:{where}" + Fore.WHITE)
+            logging.warning(Fore.YELLOW + f"Daño fuera de rango, amount:{amount}, relative_column:{relative_column}, self.card.column:{self.card.column}, where:{where}" + Fore.WHITE)
             return
         
         #Reduce damaged card's health
@@ -52,6 +53,7 @@ class Effect():
 
             #Activate card on_kill effect
             self.on_kill()
+            self.has_killed = True
 
             #Activate destroyed_card on_death effect
             destroyed_card.on_death()
@@ -62,7 +64,7 @@ class Effect():
 
         #Check if there is a card in the given position
         if not inRange(column) or not exists(self.owner.columns[column], where):
-            logging.error(Fore.RED + f"Cura fuera de rango, amount:{amount}, column:{column}, where:{where}" + Fore.WHITE)
+            logging.warning(Fore.YELLOW + f"Cura fuera de rango, amount:{amount}, column:{column}, where:{where}" + Fore.WHITE)
             return
 
         #Health should be the minimum between max health and current health + amount to be healed
@@ -72,21 +74,25 @@ class Effect():
             )
         logging.info(Fore.GREEN + f"CURA: amount:{amount}, self.card.column:{self.card.column}, where:{where}" + Fore.WHITE)
         
-    def move(self, column_destination: int, card_to_move: list[int, int] = False, own_card = True, switch = False):
-        #Defaults to the card associated to this effect (self.card)
-        card = card_to_move if card_to_move else self.card
-        if card_to_move:
-            column, where = card_to_move
-            columns = self.owner.columns if own_card else self.owner.columns_opponent
+    def move(self, column_destination: int, card_placement: list[int, int] | None = None, own_card = True, switch = False):
+        #Select set of columns
+        columns = self.owner.columns if own_card else self.owner.columns_opponent
+        
+        #Select card to move, defaults to self.card
+        if card_placement:
+            column, where = card_placement
             if not inRange(column) or not exists(columns[column], where):
-                logging.warning()
-            card =  columns[column][where] if own_card else columns[column][where]
-        else: card = self.card
+                logging.warning(Fore.YELLOW + f"Movimiento fuera de rango, column_destination: {column_destination}, card_placement: {card_placement}, own_card: {own_card}, switch: {switch}" + Fore.WHITE)
+                return
+            card =  columns[column][where]
+        else: 
+            card = self.card
 
         #Remove card from current column, move it to the last position of the column to move
-        self.owner.columns[card.column].remove(card)
-        self.owner.columns[column_destination].append(card)
-
+        columns[card.column].remove(card)
+        columns[column_destination].append(card)
+        logging.info(Fore.GREEN + f"MOVIMIENTO {self.card}: column_destination: {column_destination}, card_placement: {card_placement}, own_card: {own_card}, switch: {switch}" + Fore.WHITE)
+        
         #Update card placement
         card.column = column_destination
         card.position = len(self.owner.columns[column_destination]) - 1 
@@ -100,7 +106,7 @@ class Fire(Effect):
     def __init__(self, card, owner) -> None:
         super().__init__(card, owner)
 
-    def activate(self):
+    def activate(self, _):
         self.deal_damage(3)
         self.deal_damage(1, where = self.card.position + 1, opponent=False)
 
@@ -143,9 +149,12 @@ class Plant(Effect):
         super().__init__(card, owner)
 
     def activate(self, column):
-        column - self.card.column
+        assert abs(column - self.card.column) == 1, 'Destiny column is not adyacent to Plant\'s column'
         self.deal_damage(2, column - self.card.column)
-        self.move(self.card.column, )
+        if self.has_killed: #It should move the *damaged* enemy
+            self.has_killed = False
+            return
+        self.move(self.card.column, (column, 0), own_card = False)
 
 
 class Air(Effect):
