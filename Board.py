@@ -1,10 +1,16 @@
+from __future__ import annotations
 from Card import Card
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from Player import Player
 from colorama import Fore
 
 class Board():
-    def __init__(self, columns1, columns2) -> None:
-        self.columns1 = columns1
-        self.columns2 = columns2
+    def __init__(self, player: Player, opponent: Player) -> None:
+        self.columns1 = player.columns
+        self.columns2 = opponent.columns
+        self.player = player
+        self.opponent = opponent
 
     def __str__(self) -> str:
         max_columns1 = max((len(column) for column in self.columns1))
@@ -32,18 +38,20 @@ class Board():
         return s
 
     def place_card(self, card: Card, column, opponent = False):
-        columns = self.columns2 if opponent else self.columns1
+        # columns = self.columns2 if opponent else self.columns1
 
-        columns[column].append(card)
-        card.column = column
-        card.position = len(columns[column]) - 1
+        # columns[column].append(card)
+        # card.column = column
+        # card.position = len(columns[column]) - 1
+
+        self.opponent._play([card], [column]) if opponent else self.player._play([card], [column])
 
 
     def refresh(self): pass
 
 class BoardTest(Board):
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(self, player) -> None:
+        super().__init__(player)
         self.place_card(Card(7, 'Luz'), 1)
         self.place_card(Card(7, 'Fuego'), 1)
         self.place_card(Card(6, 'Fuego'), 2)
