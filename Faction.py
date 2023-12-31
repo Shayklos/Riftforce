@@ -10,7 +10,7 @@ class Faction():
     NUM_HIGH = 2
 
     def __init__(self, faction, owner) -> None:
-        self.cards =  Faction.NUM_LOW*[Card(Faction.HEALTH_LOW, faction, owner)]                   \
-                    + Faction.NUM_MID*[Card(Faction.HEALTH_MID, faction, owner)]                   \
+        self.cards =  Faction.NUM_LOW*[Card(Faction.HEALTH_LOW, faction, owner)]\
+                    + Faction.NUM_MID*[Card(Faction.HEALTH_MID, faction, owner)]\
                     + Faction.NUM_HIGH*[Card(Faction.HEALTH_HIGH, faction, owner)]                 
 

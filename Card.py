@@ -6,7 +6,6 @@ if TYPE_CHECKING:
     from Player import Player
 
 
-FACTIONS = ('Agua', 'Fuego', 'Luz', 'Planta', 'Aire', 'Rayo', 'Hielo', 'Tierra', 'Cristal', 'Sombra')
 FACTION_EMOJI = {'Agua' : '💧',
                  'Planta':'🍀',
                  'Rayo' :'⚡',
@@ -18,6 +17,7 @@ FACTION_EMOJI = {'Agua' : '💧',
                  'Fuego':'🔥',
                  'Sombra':'🌑'
 }
+FACTIONS = list(FACTION_EMOJI.keys())
 
 class Card():
     def random(placed = True):
@@ -32,13 +32,13 @@ class Card():
             
         return card
 
-    def __init__(self, health, faction, owner) -> None:
+    def __init__(self, health: int, faction: str, owner: Player) -> None:
         self.owner: Player = owner
-        self.health = health
-        self.health_left = health
-        self.faction = faction
-        self.column = None
-        self.position = None
+        self.health: int = health
+        self.health_left: int = health
+        self.faction: str = faction
+        self.column: int | None = None
+        self.position: int | None = None
         self.effect: Effect = self.getEffect()
 
     def __str__(self) -> str:
@@ -50,7 +50,6 @@ class Card():
     
 
     def getEffect(self):
-        ('Agua', 'Fuego', 'Luz', 'Planta', 'Aire', 'Rayo', 'Hielo', 'Tierra', 'Cristal', 'Sombra')
         match self.faction:
             case 'Fuego': effect = Fire
             case 'Luz': effect = Light    
@@ -67,11 +66,4 @@ class Card():
     def activate(self, specific_parameters = []): self.effect.activate(specific_parameters)
     def on_placement(self): self.effect.on_placement()
     def on_death(self): self.effect.on_death()
-    
-
-if __name__ == '__main__':
-    x = Card(6, 'Fuego')
-    x.column = 2
-    x.position = 0
-
-    x.activate()
+    def on_kill(self): self.effect.on_kill()

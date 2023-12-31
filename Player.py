@@ -8,15 +8,15 @@ from colorama import Fore
 FACTIONS = {'Agua', 'Fuego', 'Luz', 'Planta', 'Aire'}
 
 class Player():
-    def __init__(self, factions) -> None:
-        self.discard_pile = []
-        self.hand = []
-        self.columns = [[], [], [], [], []]
-        self.columns_opponent = [[], [], [], [], []]
-        self.score = 0
-        self.opponents_score = 0
+    def __init__(self, factions: list[str]) -> None:
+        self.discard_pile: list[Card] = []
+        self.hand: list[Card] = []
+        self.columns: list[list[Card]] = [[], [], [], [], []]
+        self.columns_opponent: list[list[Card]] = [[], [], [], [], []]
+        self.score: int = 0
+        self.opponents_score: int = 0
         self.deck = Deck(factions, self)
-        self.factions = factions
+        self.factions: list[str] = factions
 
     def __str__(self) -> str:
         s = "Factions: "
@@ -24,22 +24,18 @@ class Player():
             s += f"{faction}, "
         s = s[:-2] + ". "
         s += f"Cards discarded: {len(self.discard_pile)}. Cards in hand: {len(self.hand)}. Score: {self.score}. "
-        
-        return s
 
+        return s
 
     def generateBoard(self):
         self.board = Board(self.columns, self.columns_opponent)
-    
 
     def draw(self):
         while len(self.hand) < 7:
             self.hand.append(self.deck.list.pop(0))
-        
 
     def sort_hand(self):
         self.hand.sort(key = lambda card : (card.health, card.faction))
-
 
     def play_placements_are_correct(self, cards: list[Card], placements: list) -> bool: 
         #Check cards are valid
@@ -71,7 +67,6 @@ class Player():
 
         return True
 
-
     def _play(self, cards: list[Card], placements: list):
         logging.debug(Fore.MAGENTA + str(self.columns_opponent) + Fore.WHITE)
         if not self.play_placements_are_correct(cards, placements):
@@ -88,11 +83,9 @@ class Player():
             self.hand.remove(card)
             self.discard_pile.append(card)
 
-
     def play_and_discard(self, cards, placements):
         self._play(cards, placements)
         self.discard_from_hand(cards)
-
 
     def activate_placements_are_correct(self, discarded_card: Card, cards: list[Card]) -> bool: 
 
@@ -121,18 +114,3 @@ class Player():
             card.activate(parameters, self.columns, self.columns_opponent)
 
         self.discard_from_hand(discarded_card)
-        
-        
-
-
-
-
-if __name__ == '__main__':
-    player = Player(('Agua', 'Fuego', 'Aire', 'Planta'))
-    player.draw()
-    # print(len(player.deck.list))
-    player.sort_hand()
-    print(player.hand)
-    print(player.hand[:3])
-    player.play_and_discard(player.hand[:3], (1,2,3), [[],[],[],[],[]])
-    print(player.hand)
