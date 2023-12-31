@@ -26,10 +26,10 @@ class Effect():
         self.has_killed = False
 
     def on_placement(self): return 
-    def on_death(self): self.owner.opponents_score += 1
+    def on_death(self): self.owner.opponents_score[0] += 1
     def on_kill(self): return
 
-    def deal_damage(self, amount: int, relative_column: int = 0, where: int = 0, opponent: bool = True):
+    def damage(self, amount: int, relative_column: int = 0, where: int = 0, opponent: bool = True):
 
         #Select set of columns where damage is going to be dealt
         columns = self.owner.columns_opponent if opponent else self.owner.columns
@@ -107,8 +107,8 @@ class Fire(Effect):
         super().__init__(card, owner)
 
     def activate(self, _):
-        self.deal_damage(3)
-        self.deal_damage(1, where = self.card.position + 1, opponent=False)
+        self.damage(3)
+        self.damage(1, where = self.card.position + 1, opponent=False)
 
 
 class Light(Effect):
@@ -120,7 +120,7 @@ class Light(Effect):
         super().__init__(card, owner)
 
     def activate(self, heal_placement : (int, int)):
-        self.deal_damage(2)
+        self.damage(2)
         self.heal(heal_placement)
 
 
@@ -134,10 +134,10 @@ class Water(Effect):
         super().__init__(card, owner)
 
     def activate(self, column_to_move):
-        self.deal_damage(2)
+        self.damage(2)
         assert abs(self.card.column - column_to_move) == 1, "Water didn't move to adjacent position"
         self.move(column_to_move)
-        self.deal_damage(1)
+        self.damage(1)
 
 
 class Plant(Effect):
@@ -150,7 +150,7 @@ class Plant(Effect):
 
     def activate(self, column):
         assert abs(column - self.card.column) == 1, 'Destiny column is not adyacent to Plant\'s column'
-        self.deal_damage(2, column - self.card.column)
+        self.damage(2, column - self.card.column)
         if self.has_killed: #It should move the *damaged* enemy
             self.has_killed = False
             return
@@ -165,8 +165,12 @@ class Air(Effect):
     def __init__(self, card, owner) -> None:
         super().__init__(card, owner)
 
-    def activate(self, specific_parameters = None):
-        pass
+    def activate(self, column_destination):
+        assert column_destination != self.card.column, "El elemental de aire tiene que moverse"
+        self.move(column_destination)
+        self.damage(1, -1)
+        self.damage(1, 0)
+        self.damage(1, 1)
 
 
 class Thunderbolt(Effect):
@@ -177,8 +181,10 @@ class Thunderbolt(Effect):
     def __init__(self, card, owner) -> None:
         super().__init__(card, owner)
 
-    def activate(self, specific_parameters = None):
-        pass
+    def activate(self, positions):
+        self.damage(2, where = positions[0])
+        if self.has_killed:
+            self.damage(2, where = positions[1])
 
 
 class Ice(Effect):
@@ -189,8 +195,15 @@ class Ice(Effect):
     def __init__(self, card, owner) -> None:
         super().__init__(card, owner)
 
-    def activate(self, specific_parameters = None):
-        pass
+    def activate(self, _):
+        try:
+            card_to_be_damaged: Card = self.owner.columns_opponent[self.card.column][-1]
+        except:
+            logging.warning(Fore.YELLOW + f"{self.card} activated but didn't find anyone to damage. column: {self.card.column}" + Fore.WHITE)
+            return 
+
+        amount = 4 if card_to_be_damaged.health - card_to_be_damaged.health_left else 1
+        self.damage(amount, where = len(self.owner.columns_opponent[self.card.column])-1)
 
 
 class Earth(Effect):
@@ -204,10 +217,10 @@ class Earth(Effect):
     def on_placement(self):
         column = self.owner.columns_opponent[self.card.column]
         for card in column:
-            self.deal_damage(1, where = card.position)
+            self.damage(1, where = card.position)
 
     def activate(self, specific_parameters = None):
-        self.deal_damage(2)
+        self.damage(2)
 
 
 class Crystal(Effect):
@@ -218,8 +231,10 @@ class Crystal(Effect):
     def __init__(self, card, owner) -> None:
         super().__init__(card, owner)
 
-    def activate(self, specific_parameters = None):
-        pass
+    def activate(self, _):
+        self.damage(4)
+
+    def on_death(self): self.owner.opponents_score[0] += 2
 
 
 class Shadow(Effect):
@@ -231,5 +246,9 @@ class Shadow(Effect):
     def __init__(self, card, owner) -> None:
         super().__init__(card, owner)
 
-    def activate(self, specific_parameters = None):
-        pass
+    def activate(self, column_destination):
+        assert column_destination != self.card.column, "El elemental de sombra tiene que moverse"
+        self.move(column_destination)
+        self.damage(1)
+
+    def on_kill(self): self.owner.score[0] += 1

@@ -13,8 +13,8 @@ class Player():
         self.hand: list[Card] = []
         self.columns: list[list[Card]] = [[], [], [], [], []]
         self.columns_opponent: list[list[Card]] = [[], [], [], [], []]
-        self.score: int = 0
-        self.opponents_score: int = 0
+        self.score: list[int] = [0]             #scores are list to use reference instead of value
+        self.opponents_score: list[int] = [0]
         self.deck = Deck(factions, self)
         self.factions: list[str] = factions
 
