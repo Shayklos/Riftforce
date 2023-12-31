@@ -2,17 +2,30 @@ from Deck import Deck
 from Card import Card
 from time import perf_counter
 from Board import Board
+import logging
+from colorama import Fore 
 
 FACTIONS = {'Agua', 'Fuego', 'Luz', 'Planta', 'Aire'}
 
 class Player():
     def __init__(self, factions) -> None:
-        self.deck = Deck(factions, self)
         self.discard_pile = []
         self.hand = []
         self.columns = [[], [], [], [], []]
         self.columns_opponent = [[], [], [], [], []]
         self.score = 0
+        self.opponents_score = 0
+        self.deck = Deck(factions, self)
+        self.factions = factions
+
+    def __str__(self) -> str:
+        s = "Factions: "
+        for faction in self.factions:
+            s += f"{faction}, "
+        s = s[:-2] + ". "
+        s += f"Cards discarded: {len(self.discard_pile)}. Cards in hand: {len(self.hand)}. Score: {self.score}. "
+        
+        return s
 
 
     def generateBoard(self):
@@ -60,6 +73,7 @@ class Player():
 
 
     def _play(self, cards: list[Card], placements: list):
+        logging.debug(Fore.MAGENTA + str(self.columns_opponent) + Fore.WHITE)
         if not self.play_placements_are_correct(cards, placements):
             raise Exception("Wrong play")
 
