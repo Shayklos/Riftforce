@@ -36,4 +36,4 @@ class Board():
         return s
 
     def place_card(self, card: Card, column):
-        card.owner._play([card], [column])
+        card.owner.play([card], [column])

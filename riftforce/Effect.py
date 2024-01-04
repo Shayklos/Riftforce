@@ -202,7 +202,7 @@ class Ice(Effect):
             logging.warning(Fore.YELLOW + f"{self.card} activated but didn't find anyone to damage. column: {self.card.column}" + Fore.WHITE)
             return 
 
-        amount = 4 if card_to_be_damaged.health - card_to_be_damaged.health_left else 1
+        amount = 4 if card_to_be_damaged.isDamaged() else 1
         self.damage(amount, where = len(self.owner.columns_opponent[self.card.column])-1)
 
 

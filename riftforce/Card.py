@@ -18,12 +18,25 @@ FACTION_EMOJI = {'Agua' : '💧',
                  'Sombra':'🌑'
 }
 FACTIONS = list(FACTION_EMOJI.keys())
+FACTIONS_ENG = {'Agua' : 'Water',
+                 'Planta': 'Plant',
+                 'Rayo' : 'Thunderbolt',
+                 'Aire':  'Air',
+                 'Hielo': 'Ice',
+                 'Tierra': 'Earth',
+                 'Luz': 'Light',
+                 'Cristal': 'Crystal',
+                 'Fuego': 'Fire',
+                 'Sombra': 'Shadow'
+
+}
 
 class Card():
     def random(placed = True):
         card = Card(
             choice([5,6,7]), 
-            choice(FACTIONS)            
+            choice(FACTIONS),
+            None           
             )
         if placed: 
             card.column = choice([0,1,2,3,4,5]) 
@@ -49,6 +62,18 @@ class Card():
     def __repr__(self) -> str:
         return f"{self.faction}: {self.health_left}/{self.health}"
     
+    def isCompatible(self, cards: list[Card]) -> bool:
+        if len(cards) > 2: return False 
+        numbers = [self.health]
+        factions = [self.faction]
+        for card in cards:
+            numbers.append(card.health)
+            factions.append(card.faction)
+
+        return len(set(numbers)) == 1 or len(set(factions)) == 1
+
+    def isDamaged(self) -> bool:
+        return bool(self.health - self.health_left)
 
     def getEffect(self):
         match self.faction:

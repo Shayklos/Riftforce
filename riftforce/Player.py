@@ -67,7 +67,7 @@ class Player():
 
         return True
 
-    def _play(self, cards: list[Card], placements: list):
+    def play(self, cards: list[Card], placements: list):
         logging.debug(Fore.MAGENTA + str(self.columns_opponent) + Fore.WHITE)
         if not self.play_placements_are_correct(cards, placements):
             raise Exception("Wrong play")
@@ -84,7 +84,7 @@ class Player():
             self.discard_pile.append(card)
 
     def play_and_discard(self, cards, placements):
-        self._play(cards, placements)
+        self.play(cards, placements)
         self.discard_from_hand(cards)
 
     def activate_placements_are_correct(self, discarded_card: Card, cards: list[Card]) -> bool: 
@@ -102,7 +102,7 @@ class Player():
                 return False
         return True
 
-    def _activate(self, discarded_card: Card, placements: list[list], activateparams):
+    def activate_and_discard(self, discarded_card: Card, placements: list[list], activateparams):
         cards: list[Card] = []
         for column, placement in placements:
             cards.append(self.columns[column][placement])
@@ -114,3 +114,10 @@ class Player():
             card.activate(parameters, self.columns, self.columns_opponent)
 
         self.discard_from_hand(discarded_card)
+
+    def controled_factions(self) -> int:
+        controled = 0
+        for player_column, opponent_column in zip(self.columns, self.columns_opponent):
+            if len(player_column) and not len(opponent_column):
+                controled += 1
+        return controled
