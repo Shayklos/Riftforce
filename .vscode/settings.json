@@ -1,0 +1,13 @@
+{
+  "files.exclude": {
+    "__pycache__": true,
+    ".vscode": true,
+    "commands\\__pycache__": true,
+    "riftforce\\__pycache__": true,
+    "commands\\Views\\__pycache__": true
+  },
+  "python.analysis.extraPaths": [
+    "./riftforce",
+    "./commands/Views"
+  ]
+}
