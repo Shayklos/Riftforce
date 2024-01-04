@@ -1,0 +1,17 @@
+Game art is not included in the repository.
+Should you obtain the illustrations, this folder should contain the following files:
+
+The illustrations for the Summoners should have the format 
+{Faction name}.png (example: Plant.png)
+
+All the summoners images should have the same width and height (if they're .jpg, change the extension optional argument in image_manipulation.py)
+
+
+The illustrations for the cards should have the format
+{Faction name}{Card health}.png (example: Plant7.png)
+
+All the cards images should have the same width and height (if they're .jpg, change the extension optional argument in image_manipulation.py)
+
+Also, files dmg1.png and dmg3.png for the 1 and 3 damage tokens should be added (may need to change the reducer variable in image_manipulation.py)
+
+Additionally, options.png can be included to make the /options command work. options.png should be a file containing the cards that explain the possible actions in a turn of Riftforce.
