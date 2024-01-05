@@ -6,30 +6,18 @@ if TYPE_CHECKING:
     from Player import Player
 
 
-FACTION_EMOJI = {'Agua' : '💧',
-                 'Planta':'🍀',
-                 'Rayo' :'⚡',
-                 'Aire': '☁',
-                 'Hielo':'❄',
-                 'Tierra':'🟤',
-                 'Luz':'💡',
-                 'Cristal':'💎',
-                 'Fuego':'🔥',
-                 'Sombra':'🌑'
+FACTION_EMOJI = {'Water' : '💧',
+                 'Plant':'🍀',
+                 'Thunderbolt' :'⚡',
+                 'Air': '☁',
+                 'Ice':'❄',
+                 'Earth':'🟤',
+                 'Light':'💡',
+                 'Crystal':'💎',
+                 'Fire':'🔥',
+                 'Shadow':'🌑'
 }
 FACTIONS = list(FACTION_EMOJI.keys())
-FACTIONS_ENG = {'Agua' : 'Water',
-                 'Planta': 'Plant',
-                 'Rayo' : 'Thunderbolt',
-                 'Aire':  'Air',
-                 'Hielo': 'Ice',
-                 'Tierra': 'Earth',
-                 'Luz': 'Light',
-                 'Cristal': 'Crystal',
-                 'Fuego': 'Fire',
-                 'Sombra': 'Shadow'
-
-}
 
 class Card():
     def random(placed = True):
@@ -50,6 +38,7 @@ class Card():
         self.health: int = health
         self.health_left: int = health
         self.faction: str = faction
+        print(faction)
         assert faction in FACTIONS
         self.column: int | None = None
         self.position: int | None = None
@@ -77,16 +66,16 @@ class Card():
 
     def getEffect(self):
         match self.faction:
-            case 'Fuego': effect = Fire
-            case 'Luz': effect = Light    
-            case 'Agua': effect = Water
-            case 'Planta': effect = Plant
-            case 'Aire': effect = Air
-            case 'Rayo': effect = Thunderbolt
-            case 'Hielo': effect = Ice
-            case 'Tierra': effect = Earth
-            case 'Cristal': effect = Crystal
-            case 'Sombra': effect = Shadow
+            case 'Fire': effect = Fire
+            case 'Light': effect = Light    
+            case 'Water': effect = Water
+            case 'Plant': effect = Plant
+            case 'Air': effect = Air
+            case 'Thunderbolt': effect = Thunderbolt
+            case 'Ice': effect = Ice
+            case 'Earth': effect = Earth
+            case 'Crystal': effect = Crystal
+            case 'Shadow': effect = Shadow
         return effect(self, self.owner)
 
     def activate(self, specific_parameters = None): self.effect.activate(specific_parameters)

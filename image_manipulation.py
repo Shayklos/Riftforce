@@ -6,7 +6,7 @@ import sys
 sys.path.insert(0, './riftforce')
 from Game import *
 from Player import Player
-from Card import Card, FACTIONS_ENG
+from Card import Card, FACTIONS
 import logging
 from random import choice
 from math import ceil
@@ -53,7 +53,7 @@ def createImgHand(cards: list[Card], handIMG_width = 2000, extension = ".png", s
 
     imgs = []
     for card in cards:
-        card_directory = directory + f"{FACTIONS_ENG.get(card.faction)}{card.health}" + extension
+        card_directory = directory + f"{card.faction}{card.health}" + extension
         imgs.append(Img.open(card_directory))
 
     height = max([img.height for img in imgs])
@@ -83,7 +83,7 @@ def columnImg(column: list[Card], extension = '.png') -> Img:
         
     imgs = []
     for card in column:
-        card_directory = directory + f"{FACTIONS_ENG.get(card.faction)}{card.health}" + extension
+        card_directory = directory + f"{card.faction}{card.health}" + extension
         imgs.append(Img.open(card_directory).convert('RGBA'))
 
     if len(imgs) == 1:
@@ -137,7 +137,7 @@ def boardImg(board: Board, separation = 100) -> Img:
 def draftImg(draft: Draft, extension = '.png', separation = 100) -> Img:
     available_factions_imgs = []
     for faction in draft.factions:
-        card_directory = directory + f"{FACTIONS_ENG.get(faction)}" + extension
+        card_directory = directory + f"{faction}" + extension
         available_factions_imgs.append(Img.open(card_directory))
     
     if len(available_factions_imgs) > 4:
@@ -151,7 +151,7 @@ def draftImg(draft: Draft, extension = '.png', separation = 100) -> Img:
 
     width_moved, height_moved = 0, 0
     for faction in draft.player2_factions:
-        card_directory = directory + f"{FACTIONS_ENG.get(faction)}" + extension
+        card_directory = directory + f"{faction}" + extension
         card = Img.open(card_directory)
         draft_img.paste(card, (width_moved, 0), card)
         width_moved += card.width
@@ -176,7 +176,7 @@ def draftImg(draft: Draft, extension = '.png', separation = 100) -> Img:
     width_moved = 0
     height_moved += available_factions_imgs[0].height + separation
     for faction in draft.player1_factions:
-        card_directory = directory + f"{FACTIONS_ENG.get(faction)}" + extension
+        card_directory = directory + f"{faction}" + extension
         card = Img.open(card_directory)
         draft_img.paste(card, (width_moved, height_moved), card)
         width_moved += card.width
@@ -187,7 +187,7 @@ def draftImg_separate(draft: Draft, extension = '.png') -> Img:
     def img_gen(factions):
         imgs = []
         for faction in factions:
-            card_directory = directory + f"{FACTIONS_ENG.get(faction)}" + extension
+            card_directory = directory + f"{faction}" + extension
             card = Img.open(card_directory)
             imgs.append(card)
 

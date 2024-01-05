@@ -5,8 +5,6 @@ from Board import Board
 import logging
 from colorama import Fore 
 
-FACTIONS = {'Agua', 'Fuego', 'Luz', 'Planta', 'Aire'}
-
 class Player():
     def __init__(self, factions: list[str]) -> None:
         self.discard_pile: list[Card] = []
@@ -111,9 +109,9 @@ class Player():
             raise Exception("Wrong activate")
         
         for card, parameters in zip(cards, activateparams):
-            card.activate(parameters, self.columns, self.columns_opponent)
+            card.activate(parameters)
 
-        self.discard_from_hand(discarded_card)
+        self.discard_from_hand([discarded_card])
 
     def controled_factions(self) -> int:
         controled = 0

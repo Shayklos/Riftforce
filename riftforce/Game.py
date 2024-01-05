@@ -31,38 +31,38 @@ class Game():
 
 class GameTest(Game):
     def __init__(self) -> None:
-        super().__init__(Player(('Tierra','Rayo','Fuego','Luz')), Player({'Cristal', 'Planta', 'Hielo', 'Sombra'}))
+        super().__init__(Player(('Earth','Thunderbolt','Fire','Light')), Player({'Crystal', 'Plant', 'Ice', 'Shadow'}))
 
-        self.board.place_card(Card(5, 'Rayo', self.player1), 0)
-        self.board.place_card(Card(6, 'Rayo', self.player1), 4)
-        self.board.place_card(Card(7, 'Rayo', self.player1), 1)
+        self.board.place_card(Card(5, 'Thunderbolt', self.player1), 0)
+        self.board.place_card(Card(6, 'Thunderbolt', self.player1), 4)
+        self.board.place_card(Card(7, 'Thunderbolt', self.player1), 1)
 
-        self.board.place_card(Card(5, 'Luz', self.player1), 3)
-        self.board.place_card(Card(6, 'Luz', self.player1), 1)
-        self.board.place_card(Card(7, 'Luz', self.player1), 2)
+        self.board.place_card(Card(5, 'Light', self.player1), 3)
+        self.board.place_card(Card(6, 'Light', self.player1), 1)
+        self.board.place_card(Card(7, 'Light', self.player1), 2)
 
-        self.board.place_card(Card(5, 'Fuego', self.player1), 4)
-        self.board.place_card(Card(6, 'Fuego', self.player1), 3)
-        self.board.place_card(Card(7, 'Fuego', self.player1), 0)
+        self.board.place_card(Card(5, 'Fire', self.player1), 4)
+        self.board.place_card(Card(6, 'Fire', self.player1), 3)
+        self.board.place_card(Card(7, 'Fire', self.player1), 0)
 
-        self.board.place_card(Card(5, 'Tierra', self.player1), 2)
-        self.board.place_card(Card(6, 'Tierra', self.player1), 4)
-        self.board.place_card(Card(7, 'Tierra', self.player1), 3)
+        self.board.place_card(Card(5, 'Earth', self.player1), 2)
+        self.board.place_card(Card(6, 'Earth', self.player1), 4)
+        self.board.place_card(Card(7, 'Earth', self.player1), 3)
 
-        self.board.place_card(Card(7, 'Luz', self.player1), 1)
-        self.board.place_card(Card(7, 'Fuego', self.player1), 1)
-        self.board.place_card(Card(6, 'Sombra', self.player1), 0)
-        self.board.place_card(Card(7, 'Luz', self.player1), 2)
-        self.board.place_card(Card(5, 'Fuego', self.player1), 3)
+        self.board.place_card(Card(7, 'Light', self.player1), 1)
+        self.board.place_card(Card(7, 'Fire', self.player1), 1)
+        self.board.place_card(Card(6, 'Shadow', self.player1), 0)
+        self.board.place_card(Card(7, 'Light', self.player1), 2)
+        self.board.place_card(Card(5, 'Fire', self.player1), 3)
 
-        self.board.place_card(Card(5, 'Luz', self.player2), 1)
-        self.board.place_card(Card(7, 'Cristal', self.player2), 2)
-        self.board.place_card(Card(5,  'Planta', self.player2), 2)
-        self.board.place_card(Card(7, 'Tierra', self.player2), 3)
-        self.board.place_card(Card(5, 'Luz', self.player2), 0)
-        self.board.place_card(Card(7, 'Tierra', self.player2), 2)
-        self.board.place_card(Card(5,  'Planta', self.player2), 4)
-        self.board.place_card(Card(5, 'Tierra', self.player2), 3)
+        self.board.place_card(Card(5, 'Light', self.player2), 1)
+        self.board.place_card(Card(7, 'Crystal', self.player2), 2)
+        self.board.place_card(Card(5,  'Plant', self.player2), 2)
+        self.board.place_card(Card(7, 'Earth', self.player2), 3)
+        self.board.place_card(Card(5, 'Light', self.player2), 0)
+        self.board.place_card(Card(7, 'Earth', self.player2), 2)
+        self.board.place_card(Card(5,  'Plant', self.player2), 4)
+        self.board.place_card(Card(5, 'Earth', self.player2), 3)
 
         for column in self.board.columns1:
             for card in column:
@@ -89,7 +89,8 @@ class Draft():
         self.isPlayer1Turn = not self.isPlayer1Turn
 
 if __name__ == '__main__':
-    game = Game(Player(('Luz', 'Fuego')), Player(('Agua', 'Tierra')))
+    # game = Game(Player(('Light', 'Fire')), Player(('Water', 'Earth')))
+    game = GameTest()
     # print(str(game))
     # print(game.player2.controled_factions())
     

@@ -23,4 +23,4 @@ class Deck():
     def shuffle(self):
         shuffle(self.list)
     
-# print(Deck(('Agua', 'Fuego')).deck[0] )
+# print(Deck(('Water', 'Fire')).deck[0] )
