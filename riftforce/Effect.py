@@ -21,9 +21,9 @@ def exists(list, i) -> bool:
     return True
 
 class Effect():
-    def __init__(self, card, owner: Player) -> None:
+    def __init__(self, card) -> None:
         self.card: Card = card
-        self.owner: Player = owner
+        self.owner: Player = self.card.owner
         self.has_killed = False
 
     def on_placement(self): return 
@@ -104,8 +104,8 @@ class Fire(Effect):
     Place 3 damage on the first enemy at this location.
     Place 1 damage on the ally directly behind this fire.
     """
-    def __init__(self, card, owner) -> None:
-        super().__init__(card, owner)
+    def __init__(self, card) -> None:
+        super().__init__(card)
 
     def activate(self, _):
         self.damage(3)
@@ -117,8 +117,8 @@ class Light(Effect):
     Place 3 damage on the first enemy at this location.
     Remove 1 damage from this Light or any ally.
     """
-    def __init__(self, card, owner) -> None:
-        super().__init__(card, owner)
+    def __init__(self, card) -> None:
+        super().__init__(card)
 
     def activate(self, heal_placement : (int, int)):
         self.damage(2)
@@ -131,8 +131,8 @@ class Water(Effect):
     Move this water to an adjacent location.
     Place 1 damage on the first enemy at the new location.
     """
-    def __init__(self, card, owner) -> None:
-        super().__init__(card, owner)
+    def __init__(self, card) -> None:
+        super().__init__(card)
 
     def activate(self, column_to_move):
         self.damage(2)
@@ -146,8 +146,8 @@ class Plant(Effect):
     Place 2 damage on the first enemy in an adjacent location.
     Move this enemy to the location of this Plant.
     """
-    def __init__(self, card, owner) -> None:
-        super().__init__(card, owner)
+    def __init__(self, card) -> None:
+        super().__init__(card)
 
     def activate(self, column):
         assert abs(column - self.card.column) == 1, 'Destiny column is not adyacent to Plant\'s column'
@@ -163,8 +163,8 @@ class Air(Effect):
     Move this Air to any other location.
     Place 1 damage each on the first enemy at the new and the adjacent locations.
     """
-    def __init__(self, card, owner) -> None:
-        super().__init__(card, owner)
+    def __init__(self, card) -> None:
+        super().__init__(card)
 
     def activate(self, column_destination):
         assert column_destination != self.card.column, "El elemental de aire tiene que moverse"
@@ -179,8 +179,8 @@ class Thunderbolt(Effect):
     Place 2 damage on any enemy at this location.
     If the thunderbolt destroys this enemy repeat this ability once immediately.
     """
-    def __init__(self, card, owner) -> None:
-        super().__init__(card, owner)
+    def __init__(self, card) -> None:
+        super().__init__(card)
 
     def activate(self, positions):
         self.damage(2, where = positions[0])
@@ -193,8 +193,8 @@ class Ice(Effect):
     If there is damage on the last enemy at this location place 4 damage on it.
     Otherwise, place 1 damage on it.
     """
-    def __init__(self, card, owner) -> None:
-        super().__init__(card, owner)
+    def __init__(self, card) -> None:
+        super().__init__(card)
 
     def activate(self, _):
         try:
@@ -212,8 +212,8 @@ class Earth(Effect):
     When you play this Earth place 1 damage on each enemy at this location.
     Place 2 damage on the first enemy at this location.
     """
-    def __init__(self, card, owner) -> None:
-        super().__init__(card, owner)
+    def __init__(self, card) -> None:
+        super().__init__(card)
 
     def on_placement(self):
         column = self.owner.columns_opponent[self.card.column]
@@ -229,8 +229,8 @@ class Crystal(Effect):
     Place 4 damage on the first enemy at this location.
     When this Crystal is destroyed your opponent gains +1 Riftforce.
     """
-    def __init__(self, card, owner) -> None:
-        super().__init__(card, owner)
+    def __init__(self, card) -> None:
+        super().__init__(card)
 
     def activate(self, _):
         self.damage(4)
@@ -244,8 +244,8 @@ class Shadow(Effect):
     Place 1 damage on the first enemy at the new location
     If the Shadows destroys this enemy gain +1 Riftforce
     """
-    def __init__(self, card, owner) -> None:
-        super().__init__(card, owner)
+    def __init__(self, card) -> None:
+        super().__init__(card)
 
     def activate(self, column_destination):
         assert column_destination != self.card.column, "El elemental de sombra tiene que moverse"

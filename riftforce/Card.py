@@ -38,7 +38,6 @@ class Card():
         self.health: int = health
         self.health_left: int = health
         self.faction: str = faction
-        print(faction)
         assert faction in FACTIONS
         self.column: int | None = None
         self.position: int | None = None
@@ -76,7 +75,7 @@ class Card():
             case 'Earth': effect = Earth
             case 'Crystal': effect = Crystal
             case 'Shadow': effect = Shadow
-        return effect(self, self.owner)
+        return effect(self)
 
     def activate(self, specific_parameters = None): self.effect.activate(specific_parameters)
     def on_placement(self): self.effect.on_placement()
