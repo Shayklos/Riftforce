@@ -12,6 +12,7 @@ def inRange(i) -> bool:
     return -1 < i < 5
 
 def exists(list, i) -> bool:
+    if i is None: return False
     if i < 0: return False
     try:
         list[i]
@@ -219,7 +220,7 @@ class Earth(Effect):
         for card in column:
             self.damage(1, where = card.position)
 
-    def activate(self, specific_parameters = None):
+    def activate(self, _):
         self.damage(2)
 
 
