@@ -4,6 +4,12 @@ from discord.ext import commands
 import sys, os
 sys.path.append('../Riftforce')
 
+from os import listdir, getenv
+from dotenv import load_dotenv
+
+load_dotenv() 
+GUILD_ID = getenv('DISCORD_GUILD_ID')
+
 
 class DevCommands(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -85,6 +91,19 @@ class DevCommands(commands.Cog):
             
         await ctx.message.add_reaction("👍")
 
+
+    @commands.command()
+    async def sync(self, ctx: commands.Context): 
+        """
+        Syncs bot commands
+        """
+        print("/sync was called by", ctx.author.name)
+
+        self.bot.tree.copy_global_to(guild=discord.Object(id=GUILD_ID)) #Makes me have to wait less in my testing guild
+        await self.bot.tree.sync(guild=discord.Object(id=GUILD_ID))
+        await self.bot.tree.sync(guild=None)
+
+        await ctx.message.add_reaction("👍")
 
 
     @commands.command()
