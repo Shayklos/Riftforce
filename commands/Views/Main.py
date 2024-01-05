@@ -4,7 +4,7 @@ from random import random
 import io 
 
 from RiftforceView import RiftforceView
-import Play
+import Play, Activate
 from image_manipulation import *
 
 
@@ -84,7 +84,7 @@ class PlayButton(discord.ui.Button):
             await interaction.followup.send(content = f"You can't do this with an empty hand.", ephemeral=True)
             return 
         
-        view = Play_CardSelectView(self.view.bot, player, self.view)
+        view = Play.CardSelectView(self.view.bot, player, self.view)
         await interaction.followup.send(content = f"Which cards do you want to play?", ephemeral=True, view = view)
 
 class ActivateButton(discord.ui.Button):
@@ -113,8 +113,8 @@ class ActivateButton(discord.ui.Button):
             await interaction.followup.send(content = f"You can't do this with an empty hand.", ephemeral=True)
             return 
         
-        view = Play.CardSelectView(self.view.bot, player, self.view)
-        await interaction.followup.send(content = f"Which cards do you want to play?", ephemeral=True, view = view)
+        view = Activate.CardSelectView(self.view.bot, player, self.view)
+        await interaction.followup.send(content = f"Which card do you want to discard and use its stats to activate?", ephemeral=True, view = view)
 
 class CheckAndDrawButton(discord.ui.Button):
     async def callback(self, interaction: discord.Interaction):

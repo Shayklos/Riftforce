@@ -17,6 +17,8 @@ class Game():
         self.board.place_card(self.player2.deck.list.pop(), 2) #Player 2 gets free elemental placed in the middle column
         self.player1.draw()
         self.player2.draw()
+        self.player1.sort_hand()
+        self.player2.sort_hand()
 
     def __str__(self) -> str:
         return f"[Player 1] {self.player1.score[0]} - {self.player2.score[0]} [Player 2]\n{self.board}"
@@ -29,12 +31,28 @@ class Game():
 
 class GameTest(Game):
     def __init__(self) -> None:
-        super().__init__(Player(('Tierra','Tierra')), Player({'Cristal', 'Planta', 'Hielo', 'Sombra'}))
+        super().__init__(Player(('Tierra','Rayo','Fuego','Luz')), Player({'Cristal', 'Planta', 'Hielo', 'Sombra'}))
+
+        self.board.place_card(Card(5, 'Rayo', self.player1), 0)
+        self.board.place_card(Card(6, 'Rayo', self.player1), 4)
+        self.board.place_card(Card(7, 'Rayo', self.player1), 1)
+
+        self.board.place_card(Card(5, 'Luz', self.player1), 3)
+        self.board.place_card(Card(6, 'Luz', self.player1), 1)
+        self.board.place_card(Card(7, 'Luz', self.player1), 2)
+
+        self.board.place_card(Card(5, 'Fuego', self.player1), 4)
+        self.board.place_card(Card(6, 'Fuego', self.player1), 3)
+        self.board.place_card(Card(7, 'Fuego', self.player1), 0)
+
+        self.board.place_card(Card(5, 'Tierra', self.player1), 2)
+        self.board.place_card(Card(6, 'Tierra', self.player1), 4)
+        self.board.place_card(Card(7, 'Tierra', self.player1), 3)
 
         self.board.place_card(Card(7, 'Luz', self.player1), 1)
         self.board.place_card(Card(7, 'Fuego', self.player1), 1)
-        self.board.place_card(Card(6, 'Fuego', self.player1), 2)
-        self.board.place_card(Card(7, 'Agua', self.player1), 2)
+        self.board.place_card(Card(6, 'Sombra', self.player1), 0)
+        self.board.place_card(Card(7, 'Luz', self.player1), 2)
         self.board.place_card(Card(5, 'Fuego', self.player1), 3)
 
         self.board.place_card(Card(5, 'Luz', self.player2), 1)
