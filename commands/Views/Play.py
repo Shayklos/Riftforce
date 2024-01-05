@@ -63,7 +63,7 @@ class CardSelectView(RiftforceView):
                                         label = 'Cancel selection',
                                         row = 4))
         
-        row = 1
+        row = 0
         counter = 0
         for card in self.player.hand:
             self.add_item(

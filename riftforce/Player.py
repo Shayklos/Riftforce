@@ -100,18 +100,19 @@ class Player():
                 return False
         return True
 
-    def activate_and_discard(self, discarded_card: Card, placements: list[list], activateparams):
-        cards: list[Card] = []
-        for column, placement in placements:
-            cards.append(self.columns[column][placement])
-
+    def activate_and_discard(self, discarded_card: Card, cards: list[Card], cards_parameters : list[list | int | None] = [None, None, None]):
         if not self.activate_placements_are_correct(discarded_card, cards):
             raise Exception("Wrong activate")
         
-        for card, parameters in zip(cards, activateparams):
+        for card, parameters in zip(cards, cards_parameters):
+            logging.info(Fore.GREEN + f"Activating {card} card with parameters {parameters}." + Fore.WHITE)
             card.activate(parameters)
 
         self.discard_from_hand([discarded_card])
+
+    def activate(self, card: Card, card_parameters = None):
+        logging.info(Fore.GREEN + f"Activating {card} card with parameters {card_parameters}." + Fore.WHITE)
+        card.activate(card_parameters)
 
     def controled_factions(self) -> int:
         controled = 0
