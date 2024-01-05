@@ -13,8 +13,10 @@ class MainView(RiftforceView):
         super().__init__(bot=bot, timeout=None)
         self.game = game 
         self.msg : discord.Message
-        self.game.player1.user : discord.User
-        self.game.player2.user : discord.User
+        self.game.player1.userid : int
+        self.game.player2.userid : int
+        self.game.player1.username : str
+        self.game.player2.username : str
 
         self.add_item(ShowHandButton(label='Show my hand', row = 0))
         self.add_item(PlayButton(label = "Play", row = 1))
@@ -23,7 +25,7 @@ class MainView(RiftforceView):
 
     async def update_board(self):
         board_img = boardImg(self.game.board)
-        name = self.game.player1.user.display_name if self.game.isPlayer1Turn else self.game.player2.user.display_name
+        name = self.game.player1.username if self.game.isPlayer1Turn else self.game.player2.username
         with io.BytesIO() as a:
             board_img.save(a, 'JPEG')
             a.seek(0)
@@ -37,10 +39,10 @@ class ShowHandButton(discord.ui.Button):
     async def callback(self, interaction: discord.Interaction):
         self.view: MainView
         await interaction.response.defer(ephemeral=True)
-        if interaction.user == self.view.game.player1.user:
+        if interaction.user.id == self.view.game.player1.userid:
             cards = self.view.game.player1.hand
             n_cards_opponent = len(self.view.game.player2.hand)
-        elif interaction.user == self.view.game.player2.user:
+        elif interaction.user.id == self.view.game.player2.userid:
             cards = self.view.game.player2.hand
             n_cards_opponent = len(self.view.game.player1.hand)
         else:
@@ -62,14 +64,14 @@ class PlayButton(discord.ui.Button):
     async def callback(self, interaction: discord.Interaction):
         self.view: MainView
         await interaction.response.defer(ephemeral=True)
-        if interaction.user == self.view.game.player1.user:
+        if interaction.user.id == self.view.game.player1.userid:
             if self.view.game.isPlayer1Turn:
                 player = self.view.game.player1
             else:
                 await interaction.followup.send(content = f"It's not your turn.", ephemeral=True)
                 return 
             
-        elif interaction.user == self.view.game.player2.user:
+        elif interaction.user.id == self.view.game.player2.userid:
             if not self.view.game.isPlayer1Turn:
                 player = self.view.game.player2
             else:
@@ -91,14 +93,14 @@ class ActivateButton(discord.ui.Button):
     async def callback(self, interaction: discord.Interaction):
         self.view: MainView
         await interaction.response.defer(ephemeral=True)
-        if interaction.user == self.view.game.player1.user:
+        if interaction.user.id == self.view.game.player1.userid:
             if self.view.game.isPlayer1Turn:
                 player = self.view.game.player1
             else:
                 await interaction.followup.send(content = f"It's not your turn.", ephemeral=True)
                 return 
             
-        elif interaction.user == self.view.game.player2.user:
+        elif interaction.user.id == self.view.game.player2.userid:
             if not self.view.game.isPlayer1Turn:
                 player = self.view.game.player2
             else:
@@ -120,14 +122,14 @@ class CheckAndDrawButton(discord.ui.Button):
     async def callback(self, interaction: discord.Interaction):
         self.view: MainView
         await interaction.response.defer(ephemeral=True)
-        if interaction.user == self.view.game.player1.user:
+        if interaction.user.id == self.view.game.player1.userid:
             if self.view.game.isPlayer1Turn:
                 player = self.view.game.player1
             else:
                 await interaction.followup.send(content = f"It's not your turn.", ephemeral=True)
                 return 
             
-        elif interaction.user == self.view.game.player2.user:
+        elif interaction.user.id == self.view.game.player2.userid:
             if not self.view.game.isPlayer1Turn:
                 player = self.view.game.player2
             else:

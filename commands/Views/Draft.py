@@ -56,8 +56,10 @@ class DraftView(RiftforceView):
         else: #Drafting finished
             # game = Game(Player(self.draft.player1_factions), Player(self.draft.player2_factions))
             game = GameTest()
-            game.player1.user = self.player1
-            game.player2.user = self.player2
+            game.player1.userid = self.player1.id
+            game.player2.userid = self.player2.id
+            game.player1.username = self.player1.display_name
+            game.player2.username = self.player2.display_name
             channel = self.dmsg.channel
             await self.dmsg.delete()
             board_img = boardImg(game.board)
