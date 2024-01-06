@@ -185,5 +185,5 @@ class CheckAndDrawButton(discord.ui.Button):
         player.sort_hand()
         player.score[0] += player.controled_factions()
         self.view.log += f"\n{player.username} has **checked and drawn**. {player.username} gained {player.controled_factions()} points."
-        self.view.msg.edit(content = self.view.log[-2000:])
+        await self.view.msg.edit(content = self.view.log[-2000:])
         await interaction.followup.send(content = f"You gained {player.controled_factions()} points.", ephemeral=True)
