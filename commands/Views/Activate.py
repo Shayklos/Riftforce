@@ -59,6 +59,7 @@ class CardSelectButton(discord.ui.Button):
             else: item.disabled = False
         await interaction.response.edit_message(view=self.view)
 
+
 class CardSelectView(RiftforceView):
     def __init__(self, button: ActivateButton, player):
         super().__init__(bot=button.view.bot, timeout=button.view.timeout)
@@ -89,6 +90,7 @@ class CardSelectView(RiftforceView):
                 counter = 0
 
 
+
 class SimpleButton(discord.ui.Button):
     def __init__(self, card: Card | None = None, style: ButtonStyle = ButtonStyle.secondary, label: str | None = None, disabled: bool = False, custom_id: str | None = None, url: str | None = None, emoji: str | Emoji | PartialEmoji | None = None, row: int | None = None):
         super().__init__(style=style, label=label, disabled=disabled, custom_id=custom_id, url=url, emoji=emoji, row=row)
@@ -109,6 +111,7 @@ class SimpleButton(discord.ui.Button):
                 item.disabled = False
 
         await interaction.response.edit_message(view = self.view)
+
 
 class SimpleView(RiftforceView):
     def __init__(self, button: CardSelectConfirm):
@@ -207,6 +210,7 @@ class ComplexColumnButton(discord.ui.Button):
 
         await interaction.response.edit_message(view=self.view)
 
+
 class ComplexViewConfirmButton(discord.ui.Button):
     async def callback(self, interaction: discord.Interaction):
         self.view: ComplexView
@@ -235,6 +239,7 @@ class ComplexViewCancelButton(discord.ui.Button):
         self.view.card_parameters = []
         self.view.generate_buttons()
         await interaction.response.edit_message(view=self.view)
+
 
 class ComplexView(RiftforceView):
     def __init__(self, button: CardSelectConfirm):

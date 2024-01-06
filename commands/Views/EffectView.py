@@ -32,7 +32,8 @@ class MoveButton(discord.ui.Button):
 
         self.view.add_parameter(int(self.label[-1]) - 1)
         await self.view.go_next_card(interaction)
-    
+
+
 class ThunderboltButton(discord.ui.Button):
     def __init__(self, card: Card, style: ButtonStyle = ButtonStyle.primary, disabled: bool = False, custom_id: str | None = None, url: str | None = None, emoji: str | Emoji | PartialEmoji | None = None, row: int | None = None):
         super().__init__(style=style, label=f"{card.position+1}. {card}", disabled=disabled, custom_id=custom_id, url=url, emoji=emoji, row=row)
@@ -68,6 +69,7 @@ class ThunderboltEmptyButton(discord.ui.Button):
         self.view.add_parameter([0,0])
         await self.view.go_next_card(interaction)
 
+
 class LightButton(discord.ui.Button):
     def __init__(self, card: Card | None = None, style: ButtonStyle = ButtonStyle.secondary, label: str | None = None, disabled: bool = False, custom_id: str | None = None, url: str | None = None, emoji: str | Emoji | PartialEmoji | None = None, row: int | None = None):
         super().__init__(style=style, label=label, disabled=disabled, custom_id=custom_id, url=url, emoji=emoji, row=row)
@@ -78,7 +80,25 @@ class LightButton(discord.ui.Button):
     async def callback(self, interaction: discord.Interaction):
         self.view.add_parameter((self.card.column, self.card.position))
         await self.view.go_next_card(interaction)
+
+class LightColumnButton(discord.ui.Button):
+    def __init__(self, column, *, disabled: bool = False, custom_id: str | None = None, url: str | None = None, emoji: str | Emoji | PartialEmoji | None = None, row: int | None = None):
+        super().__init__(style=discord.ButtonStyle.primary, disabled=disabled, custom_id=custom_id, url=url, emoji=emoji, row=row)
+        self.column = column
+        self.label = f'Column {column + 1}'
     
+    async def callback(self, interaction: discord.Interaction):
+        self.view: View
+        
+        self.view.clear_items()
+        player = self.view.game.player1 if self.view.game.isPlayer1Turn else self.view.game.player2
+        for card in player.columns[self.column]:
+            self.view.add_item(LightButton(card, label = f"{card.position + 1}. {card}"))
+        
+        await interaction.response.edit_message(view=self.view)
+
+
+
 class View(RiftforceView):
     def __init__(self, underlying_view: SimpleView, timeout: float | None = 180):
         super().__init__(bot=underlying_view.bot, timeout=underlying_view.timeout)
@@ -133,10 +153,16 @@ class View(RiftforceView):
     def add_buttons_light(self):
         player = self.game.player1 if self.game.isPlayer1Turn else self.game.player2
         max_column_len = max([len(column) for column in player.columns])
-        for column in player.columns: 
-            for i in range(max_column_len):
-                if len(column) > i: self.add_item(LightButton(row = i, label = str(column[i]), card = column[i]))
-                else:               self.add_item(LightButton(row = i, label = '----', disabled=True))
+
+        if max_column_len < 6:
+            for column in player.columns: 
+                for i in range(max_column_len):
+                    if len(column) > i: self.add_item(LightButton(row = i, label = str(column[i]), card = column[i]))
+                    else:               self.add_item(LightButton(row = i, label = '----', disabled=True))
+        
+        else:
+            for i, column in enumerate(player.columns):
+                self.add_item(LightColumnButton(i))
         
     async def go_next_card(self, interaction : discord.Interaction, log = None):
         if self.n_activated_cards == self.n_cards:
@@ -144,7 +170,7 @@ class View(RiftforceView):
             player = game.player1 if game.isPlayer1Turn else game.player2
             player.activate_and_discard(self.underlying_view.reference_card, self.underlying_view.selected_cards, self.underlying_view.card_parameters)
             # game.isPlayer1Turn = not game.isPlayer1Turn # UNCOMMENT
-            await interaction.response.edit_message(view = None)
+            await interaction.response.edit_message(content = "log TODO", view = None)
             await self.underlying_view.playView.update_board()
             return 
         
