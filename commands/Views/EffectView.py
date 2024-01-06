@@ -103,13 +103,18 @@ class View(RiftforceView):
     def __init__(self, underlying_view: SimpleView, timeout: float | None = 180):
         super().__init__(bot=underlying_view.bot, timeout=underlying_view.timeout)
         self.underlying_view = underlying_view
-        self.cards: list[Card] = self.underlying_view.cards_with_effects #aire, sombra
-        self.n_cards = len(self.cards) # 2
+        self.cards: list[Card] = self.underlying_view.cards_with_effects
+        self.n_cards = len(self.cards)
         self.n_activated_cards = 0
 
         self.initial_content = self.content()
 
         self.game = deepcopy(self.underlying_view.playView.game)
+        self.simulated_cards: list[Card] = []
+        player = self.game.player1 if self.game.isPlayer1Turn else self.game.player2
+        for card in self.underlying_view.selected_cards:
+            self.simulated_cards.append(player.columns[card.column][card.position])
+
         self.simulation_index = 0
         self.simulate()
         
@@ -185,13 +190,8 @@ class View(RiftforceView):
         index = self.underlying_view.selected_cards.index(self.cards[self.n_activated_cards])
         
         #Play in the simulated game
-        player = self.game.player1 if self.game.isPlayer1Turn else self.game.player2
-        column = self.underlying_view.selected_cards[self.simulation_index].column
-        position = self.underlying_view.selected_cards[self.simulation_index].position
-
-        print()
-        card = player.columns[column][position]
-        player.activate(card, param)
+        card = self.simulated_cards[self.simulation_index]
+        card.activate(param)
 
         if self.n_activated_cards != self.n_cards:
             self.simulation_index += 1
@@ -201,21 +201,11 @@ class View(RiftforceView):
         self.n_activated_cards += 1
 
     def simulate(self):
-        print(f"Simulated game ----------\n {self.game}\n----------")
-        #has no effect: true, false, false
-        if self.simulation_index >= 3: return
+        if self.simulation_index >= len(self.underlying_view.selected_cards): return
         if not self.underlying_view.has_no_effect[self.simulation_index]: return
    
-        #If card has no effect
-        player = self.game.player1 if self.game.isPlayer1Turn else self.game.player2
-        print(player.username)
-        column = self.underlying_view.selected_cards[self.simulation_index].column
-        position = self.underlying_view.selected_cards[self.simulation_index].position
-
-        print('column', column, 'position', position)
-        card = player.columns[column][position]
-
-        player.activate(card)
+        card = self.simulated_cards[self.simulation_index]
+        card.activate()
         
         self.simulation_index += 1
         self.simulate()
