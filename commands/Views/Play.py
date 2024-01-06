@@ -134,7 +134,14 @@ class CardColumnView(RiftforceView):
     async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button):
         self.clear_items()
         self.player.play_and_discard(self.selected_cards, self.columns)
-        self.playView.game.isPlayer1Turn = not self.playView.game.isPlayer1Turn
+
+        self.playView.log += f"\n{self.player.username} has **played** cards: "
+        for card, column in zip(self.selected_cards, self.columns):
+            self.playView.log += f"{card} in column {column}, "
+        self.playView.log = self.playView.log[:-2] + "."
+
+        self.playView.game.change_turn()
+        if self.playView.game.isPlayer1Turn: self.playView.log += self.playView.turn_msg()
         await self.playView.update_board()
         await interaction.response.edit_message(content=f"You've chosen {self.selected_cards}.", view = None)
         

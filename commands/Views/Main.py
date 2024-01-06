@@ -22,22 +22,55 @@ class MainView(RiftforceView):
         self.game.player2.userid : int
         self.game.player1.username : str
         self.game.player2.username : str
-
+        self.log = self.turn_msg(n = False)
         self.add_item(ShowHandButton(label='Show my hand', row = 0))
         self.add_item(PlayButton(label = "Play", row = 1))
         self.add_item(ActivateButton(label = "Activate", row = 1))
         self.add_item(CheckAndDrawButton(label = "Check & draw", row = 1))
 
-    async def update_board(self):
+    async def update_board(self, log = ""):
         board_img = boardImg(self.game.board)
         name = self.game.player1.username if self.game.isPlayer1Turn else self.game.player2.username
+        self.log += f"{log}\nIt's the turn of {name}."
+
+        if self.game.isFinished():
+            winner = self.game.player1.username if self.game.player1.score > self.game.player2.score else self.game.player2.username
+            self.log += f"__**{winner} has won!**__"
         with io.BytesIO() as a:
             board_img.save(a, 'JPEG')
             a.seek(0)
-            await self.msg.edit(content = f"It's the turn of {name}", 
+            await self.msg.edit(content = self.log[-2000:], 
                                 view = self, 
                                 attachments= [discord.File(a, filename = "e.jpg")])
             
+            
+    def turn_msg(self, n = True):
+        l = f"**[Turn {self.game.turn_number}]** {self.game.player1.username} **{self.game.player1.score[0]}** - **{self.game.player2.score[0]}** {self.game.player2.username}"
+        if n: return '\n' + l
+        return l
+
+
+    def activate_log(self, player, reference_card, selected_cards: list[Card], card_parameters):
+        self.log += f"\n{player.username} has discarded {reference_card} and **activated** cards: "
+        for card, param in zip(selected_cards, card_parameters):
+            if card.faction == 'Water': self.log += f"{card} has dealt 2 damage to first enemy in column {card.column + 1}, moved to column {param}, and dealt 1 damage to first enemy in column {param}. "
+            if card.faction == 'Plant': self.log += f"{card} has dealt 2 damage to the first enemy in column {param} and moved that enemy to column {card.column + 1}. "
+            if card.faction == 'Thunderbolt': 
+                if param[0] is None:
+                    pass
+                elif param[1] is None:
+                    self.log += f"{card} has dealt damage to the {param[0] + 1}º enemy in column {card.column + 1}. "
+                else:
+                    self.log += f"{card} has dealt damage to the {param[0] + 1}º enemy, and after killing it, it dealt 2 damage to the {param[0] + 1}º in column {card.column + 1}. "
+                
+            if card.faction == 'Air': self.log += f"{card} has moved to column {param} and dealt 1 damage to the first enemy in column {param} and the columns adjacent to it. "
+            if card.faction == 'Ice': self.log += f"{card} has dealt damage to the first enemy in column {card.column + 1}. "
+            if card.faction == 'Earth': self.log += f"{card} has dealt 2 damage to the first enemy in column {card.column + 1}. "
+            if card.faction == 'Light': self.log += f"{card} has dealt damage in column {card.column + 1}, and has healed 1 damage to the {param[1]}º ally in column {param[0]} ({player.columns[param[0]][param[1]]}). "
+            if card.faction == 'Crystal': self.log += f"{card} has dealt 4 damage to the first enemy in column {card.column + 1}. "
+            if card.faction == 'Fire': self.log += f"{card} has dealt 3 damage to the first enemy in column {card.column + 1}, and 1 damage to the ally behind it. "
+            if card.faction == 'Shadow': self.log += f"{card} has moved to column {param}, and dealt 1 damage to first enemy in column {param}. "
+
 
 
 class ShowHandButton(discord.ui.Button):
@@ -151,4 +184,6 @@ class CheckAndDrawButton(discord.ui.Button):
         player.draw()
         player.sort_hand()
         player.score[0] += player.controled_factions()
+        self.view.log += f"\n{player.username} has **checked and drawn**. {player.username} gained {player.controled_factions()} points."
+        self.view.msg.edit(content = self.view.log[-2000:])
         await interaction.followup.send(content = f"You gained {player.controled_factions()} points.", ephemeral=True)

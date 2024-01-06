@@ -21,8 +21,6 @@ class CardSelectConfirm(discord.ui.Button):
         self.view : CardSelectView
 
         max_column_len = max([len(column) for column in self.view.player.columns])
-        print("Going SimpleView") if max_column_len < 5 else print("GoingComplexView")
-
         if max_column_len < 5:
             await interaction.response.edit_message(
                 content= f"You're discarding {self.view.selected_cards[0]}. Which cards are you activating?", 
@@ -137,7 +135,6 @@ class SimpleView(RiftforceView):
 
     def generate_buttons(self):
         max_column_len = max([len(column) for column in self.player.columns])
-        print("Requisite achieved:", max_column_len - 1 < 5)
         for column in self.player.columns: 
             for i in range(max_column_len):
                 if len(column) > i: self.add_item(SimpleButton(row = i, label = str(column[i]), card = column[i], 
@@ -151,8 +148,9 @@ class SimpleView(RiftforceView):
         if all(self.has_no_effect): #activate cards, no entering view
             game = self.playView.game
             player = game.player1 if game.isPlayer1Turn else game.player2
+            self.playView.activate_log(player, self.reference_card, self.selected_cards, self.card_parameters)
             player.activate_and_discard(self.reference_card, self.selected_cards, self.card_parameters)
-            # game.isPlayer1Turn = not game.isPlayer1Turn # UNCOMMENT
+            game.change_turn()
             await interaction.response.edit_message(view=None)
             await self.playView.update_board()
             return
@@ -220,7 +218,7 @@ class ComplexViewConfirmButton(discord.ui.Button):
             game = self.view.playView.game
             player = game.player1 if game.isPlayer1Turn else game.player2
             player.activate_and_discard(self.view.reference_card, self.view.selected_cards, self.view.card_parameters)
-            # game.isPlayer1Turn = not game.isPlayer1Turn # UNCOMMENT
+            game.isPlayer1Turn = game.change_turn()
             await interaction.response.edit_message(view=None)
             await self.view.playView.update_board()
             return

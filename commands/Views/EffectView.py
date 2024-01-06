@@ -66,7 +66,7 @@ class ThunderboltButton(discord.ui.Button):
 class ThunderboltEmptyButton(discord.ui.Button):
     async def callback(self, interaction: discord.Interaction):
         self.view: View
-        self.view.add_parameter([0,0])
+        self.view.add_parameter([None,None])
         await self.view.go_next_card(interaction)
 
 
@@ -103,8 +103,8 @@ class View(RiftforceView):
     def __init__(self, underlying_view: SimpleView, timeout: float | None = 180):
         super().__init__(bot=underlying_view.bot, timeout=underlying_view.timeout)
         self.underlying_view = underlying_view
-        self.cards: list[Card] = self.underlying_view.cards_with_effects
-        self.n_cards = len(self.cards)
+        self.cards: list[Card] = self.underlying_view.cards_with_effects #aire, sombra
+        self.n_cards = len(self.cards) # 2
         self.n_activated_cards = 0
 
         self.initial_content = self.content()
@@ -168,9 +168,11 @@ class View(RiftforceView):
         if self.n_activated_cards == self.n_cards:
             game = self.underlying_view.playView.game #Do it with real game
             player = game.player1 if game.isPlayer1Turn else game.player2
+            
+            self.underlying_view.playView.activate_log(player, self.underlying_view.reference_card, self.underlying_view.selected_cards, self.underlying_view.card_parameters)
             player.activate_and_discard(self.underlying_view.reference_card, self.underlying_view.selected_cards, self.underlying_view.card_parameters)
-            # game.isPlayer1Turn = not game.isPlayer1Turn # UNCOMMENT
-            await interaction.response.edit_message(content = "log TODO", view = None)
+            game.change_turn()
+            await interaction.response.edit_message(content = "Done!", view = None)
             await self.underlying_view.playView.update_board()
             return 
         
@@ -187,6 +189,7 @@ class View(RiftforceView):
         column = self.underlying_view.selected_cards[self.simulation_index].column
         position = self.underlying_view.selected_cards[self.simulation_index].position
 
+        print()
         card = player.columns[column][position]
         player.activate(card, param)
 
@@ -198,15 +201,18 @@ class View(RiftforceView):
         self.n_activated_cards += 1
 
     def simulate(self):
+        print(f"Simulated game ----------\n {self.game}\n----------")
+        #has no effect: true, false, false
         if self.simulation_index >= 3: return
         if not self.underlying_view.has_no_effect[self.simulation_index]: return
    
         #If card has no effect
         player = self.game.player1 if self.game.isPlayer1Turn else self.game.player2
-        
+        print(player.username)
         column = self.underlying_view.selected_cards[self.simulation_index].column
         position = self.underlying_view.selected_cards[self.simulation_index].position
 
+        print('column', column, 'position', position)
         card = player.columns[column][position]
 
         player.activate(card)
