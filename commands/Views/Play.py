@@ -83,8 +83,8 @@ class CardSelectView(RiftforceView):
 class CardColumnButton(discord.ui.Button):
     def __init__(self, column, *, disabled: bool = False, custom_id: str | None = None, url: str | None = None, emoji: str | Emoji | PartialEmoji | None = None, row: int | None = None):
         super().__init__(style=discord.ButtonStyle.primary, disabled=disabled, custom_id=custom_id, url=url, emoji=emoji, row=row)
-        self.column = column - 1
-        self.label = f'Column {column}'
+        self.column = column
+        self.label = f'Column {column + 1}'
     
     async def callback(self, interaction: discord.Interaction):
         self.view: CardColumnView
@@ -116,7 +116,7 @@ class CardColumnView(RiftforceView):
         self.playView: MainView = playView
         self.columns = []
 
-        for i in (1,2,3,4,5):
+        for i in range(5):
             self.add_item(CardColumnButton(i))
     
     def isColumnCompatible(self, column:int):
@@ -136,7 +136,7 @@ class CardColumnView(RiftforceView):
         self.player.play_and_discard(self.selected_cards, self.columns)
         self.playView.game.isPlayer1Turn = not self.playView.game.isPlayer1Turn
         await self.playView.update_board()
-        await interaction.response.edit_message(content=f"You've chosen {self.selected_cards}.", view = self)
+        await interaction.response.edit_message(content=f"You've chosen {self.selected_cards}.", view = None)
         
     
     @discord.ui.button(label = "Cancel selection", row = 1, style=discord.ButtonStyle.red) 
