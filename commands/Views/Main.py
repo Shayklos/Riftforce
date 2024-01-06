@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import discord
 from discord.ext import commands
 from random import random
@@ -6,12 +8,15 @@ import io
 from RiftforceView import RiftforceView
 import Play, Activate
 from image_manipulation import *
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from Draft import DraftView
 
 
 class MainView(RiftforceView):
-    def __init__(self, game: Game, bot):
-        super().__init__(bot=bot, timeout=None)
-        self.game = game 
+    def __init__(self, draftView: DraftView):
+        super().__init__(bot=draftView.bot, timeout=None)
+        self.game = draftView.game 
         self.msg : discord.Message
         self.game.player1.userid : int
         self.game.player2.userid : int
@@ -59,7 +64,6 @@ class ShowHandButton(discord.ui.Button):
                                 file= discord.File(a, filename = "e.jpg"),
                                 ephemeral=True)
 
-
 class PlayButton(discord.ui.Button):
     async def callback(self, interaction: discord.Interaction):
         self.view: MainView
@@ -86,7 +90,7 @@ class PlayButton(discord.ui.Button):
             await interaction.followup.send(content = f"You can't do this with an empty hand.", ephemeral=True)
             return 
         
-        view = Play.CardSelectView(self.view.bot, player, self.view)
+        view = Play.CardSelectView(self, player)
         await interaction.followup.send(content = f"Which cards do you want to play?", ephemeral=True, view = view)
 
 class ActivateButton(discord.ui.Button):
@@ -115,7 +119,7 @@ class ActivateButton(discord.ui.Button):
             await interaction.followup.send(content = f"You can't do this with an empty hand.", ephemeral=True)
             return 
         
-        view = Activate.CardSelectView(self.view.bot, player, self.view)
+        view = Activate.CardSelectView(self, player)
         await interaction.followup.send(content = f"Which card do you want to discard and use its stats to activate?", ephemeral=True, view = view)
 
 class CheckAndDrawButton(discord.ui.Button):
@@ -148,4 +152,3 @@ class CheckAndDrawButton(discord.ui.Button):
         player.sort_hand()
         player.score[0] += player.controled_factions()
         await interaction.followup.send(content = f"You gained {player.controled_factions()} points.", ephemeral=True)
-

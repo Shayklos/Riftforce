@@ -1,3 +1,4 @@
+from __future__ import annotations
 import discord
 from discord.enums import ButtonStyle
 from discord.emoji import Emoji
@@ -8,7 +9,7 @@ from RiftforceView import RiftforceView
 from typing import TYPE_CHECKING, Optional, Union
 import EffectView
 if TYPE_CHECKING:
-    from Main import MainView
+    from Main import *
 from image_manipulation import *
 
 class CardSelectConfirm(discord.ui.Button):
@@ -50,11 +51,11 @@ class CardSelectButton(discord.ui.Button):
         await interaction.response.edit_message(view=self.view)
 
 class CardSelectView(RiftforceView):
-    def __init__(self, bot, player, playView, timeout: float | None = 180):
-        super().__init__(bot=bot, timeout=timeout)
+    def __init__(self, button: ActivateButton, player):
+        super().__init__(bot=button.view.bot, timeout=button.view.timeout)
         self.player: Player = player
         self.selected_cards = []
-        self.playView = playView
+        self.playView = button.view
 
         self.add_item(CardSelectConfirm(style = discord.ButtonStyle.green,
                                         label = 'Confirm',
@@ -101,13 +102,12 @@ class SimpleButton(discord.ui.Button):
         await interaction.response.edit_message(view = self.view)
 
 class SimpleView(RiftforceView):
-    def __init__(self, bot, player, reference_card, playView, timeout: float | None = 180):
-        super().__init__(bot=bot, timeout=timeout)
-        self.player: Player = player
-        self.reference_card: Card = reference_card
-        self.playView: MainView = playView
+    def __init__(self, button: CardSelectConfirm):
+        super().__init__(bot=button.view.bot, timeout=button.view.timeout)
+        self.player: Player = button.view.player
+        self.reference_card: Card = button.view.selected_cards[0]
+        self.playView: MainView = button.view.playView
         self.selected_cards: list[Card] = []
-
         self.generate_buttons()
 
     def compatible(self, proposed_card):
@@ -148,7 +148,7 @@ class SimpleView(RiftforceView):
         self.cards_with_effects = list(filter(
             lambda a: not self.has_no_effect[self.selected_cards.index(a)], 
             self.selected_cards))
-        view = EffectView.View(self.bot, self)
+        view = EffectView.View(self)
         await interaction.response.edit_message(content=f"You've chosen, in this order, {self.selected_cards}. {view.initial_content}", view = view)
         
     

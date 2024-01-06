@@ -1,3 +1,4 @@
+from __future__ import annotations
 import discord
 from discord.enums import ButtonStyle
 from discord.emoji import Emoji
@@ -7,7 +8,7 @@ from discord.partial_emoji import PartialEmoji
 from RiftforceView import RiftforceView
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from Main import MainView
+    from Main import MainView, PlayButton
 from image_manipulation import *
 
 class CardSelectConfirm(discord.ui.Button):
@@ -50,11 +51,11 @@ class CardSelectButton(discord.ui.Button):
         await interaction.response.edit_message(view=self.view)
 
 class CardSelectView(RiftforceView):
-    def __init__(self, bot, player, playView, timeout: float | None = 180):
-        super().__init__(bot=bot, timeout=timeout)
+    def __init__(self, button: PlayButton, player):
+        super().__init__(bot=button.view.bot, timeout=button.view.timeout)
         self.player: Player = player
         self.selected_cards = []
-        self.playView = playView
+        self.playView = button.view
 
         self.add_item(CardSelectConfirm(style = discord.ButtonStyle.green,
                                         label = 'Confirm',

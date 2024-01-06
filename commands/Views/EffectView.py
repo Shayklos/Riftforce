@@ -80,9 +80,9 @@ class LightButton(discord.ui.Button):
         await self.view.go_next_card(interaction)
     
 class View(RiftforceView):
-    def __init__(self, bot, underlying_view, timeout: float | None = 180):
-        super().__init__(bot=bot, timeout=timeout)
-        self.underlying_view: SimpleView = underlying_view
+    def __init__(self, underlying_view: SimpleView, timeout: float | None = 180):
+        super().__init__(bot=underlying_view.bot, timeout=underlying_view.timeout)
+        self.underlying_view = underlying_view
         self.cards: list[Card] = self.underlying_view.cards_with_effects
         self.n_cards = len(self.cards)
         self.n_activated_cards = 0

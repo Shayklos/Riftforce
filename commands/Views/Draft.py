@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import discord
 import io 
 
@@ -54,19 +56,20 @@ class DraftView(RiftforceView):
             for faction in self.draft.factions:
                 self.add_item(DraftButton(label = faction,style=discord.ButtonStyle.blurple)) #TODO stylize row
         else: #Drafting finished
-            # game = Game(Player(self.draft.player1_factions), Player(self.draft.player2_factions))
-            game = GameTest()
-            game.player1.userid = self.player1.id
-            game.player2.userid = self.player2.id
-            game.player1.username = self.player1.display_name
-            game.player2.username = self.player2.display_name
+            # self.game = Game(Player(self.draft.player1_factions), Player(self.draft.player2_factions))
+            self.game = GameTest()
+            self.game.player1.userid = self.player1.id
+            self.game.player2.userid = self.player2.id
+            self.game.player1.username = self.player1.display_name
+            self.game.player2.username = self.player2.display_name
             channel = self.dmsg.channel
             await self.dmsg.delete()
-            board_img = boardImg(game.board)
+            board_img = boardImg(self.game.board)
             with io.BytesIO() as a:
                 board_img.save(a, 'JPEG')
                 a.seek(0)
-                playView = MainView(game, bot = self.bot)
+                # playView = MainView(game, bot = self.bot)
+                playView = MainView(self)
                 playView.msg = await channel.send(f"It's the turn of {self.player1.display_name}", 
                                view = playView, 
                                file = discord.File(a, filename = "e.jpg"))
