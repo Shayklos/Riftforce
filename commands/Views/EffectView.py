@@ -142,7 +142,7 @@ class View(RiftforceView):
         if self.n_activated_cards == self.n_cards:
             game = self.underlying_view.playView.game #Do it with real game
             player = game.player1 if game.isPlayer1Turn else game.player2
-            player.activate_and_discard(self.underlying_view.reference_card, self.cards, self.underlying_view.card_parameters)
+            player.activate_and_discard(self.underlying_view.reference_card, self.underlying_view.selected_cards, self.underlying_view.card_parameters)
             # game.isPlayer1Turn = not game.isPlayer1Turn # UNCOMMENT
             await interaction.response.edit_message(view = None)
             await self.underlying_view.playView.update_board()
@@ -164,8 +164,9 @@ class View(RiftforceView):
         card = player.columns[column][position]
         player.activate(card, param)
 
-        self.simulation_index += 1
-        self.simulate()
+        if self.n_activated_cards != self.n_cards:
+            self.simulation_index += 1
+            self.simulate()
 
         self.underlying_view.card_parameters[index] = param
         self.n_activated_cards += 1

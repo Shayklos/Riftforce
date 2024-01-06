@@ -272,7 +272,6 @@ class ComplexView(RiftforceView):
             for card in column:
                 incompatible.append( not self.compatible(card) )
 
-            print(i, incompatible)
             if all(incompatible): #Disallow entering a column without activable cards / an empty column
                 self.add_item(ComplexColumnButton(i, disabled=True))
             else:
