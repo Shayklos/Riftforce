@@ -53,9 +53,9 @@ class MainView(RiftforceView):
     def activate_log(self, player, reference_card, selected_cards: list[Card], card_parameters):
         self.log += f"\n{player.username} has discarded {reference_card} and **activated** cards: "
         for card, param in zip(selected_cards, card_parameters):
-            if card.faction == 'Water': self.log += f"{card} has dealt 2 damage to first enemy in column {card.column + 1}, moved to column {param}, and dealt 1 damage to first enemy in column {param}. "
-            if card.faction == 'Plant': self.log += f"{card} has dealt 2 damage to the first enemy in column {param} and moved that enemy to column {card.column + 1}. "
-            if card.faction == 'Thunderbolt': 
+            if card.faction == 'Water': self.log += f"{card} has dealt 2 damage to first enemy in column {card.column + 1}, moved to column {param+1}, and dealt 1 damage to first enemy in column {param+1}. "
+            elif card.faction == 'Plant': self.log += f"{card} has dealt 2 damage to the first enemy in column {param+1} and moved that enemy to column {card.column + 1}. "
+            elif card.faction == 'Thunderbolt': 
                 if param[0] is None:
                     pass
                 elif param[1] is None:
@@ -63,14 +63,22 @@ class MainView(RiftforceView):
                 else:
                     self.log += f"{card} has dealt damage to the {param[0] + 1}º enemy, and after killing it, it dealt 2 damage to the {param[0] + 1}º in column {card.column + 1}. "
                 
-            if card.faction == 'Air': self.log += f"{card} has moved to column {param} and dealt 1 damage to the first enemy in column {param} and the columns adjacent to it. "
-            if card.faction == 'Ice': self.log += f"{card} has dealt damage to the first enemy in column {card.column + 1}. "
-            if card.faction == 'Earth': self.log += f"{card} has dealt 2 damage to the first enemy in column {card.column + 1}. "
-            if card.faction == 'Light': self.log += f"{card} has dealt damage in column {card.column + 1}, and has healed 1 damage to the {param[1]}º ally in column {param[0]} ({player.columns[param[0]][param[1]]}). "
-            if card.faction == 'Crystal': self.log += f"{card} has dealt 4 damage to the first enemy in column {card.column + 1}. "
-            if card.faction == 'Fire': self.log += f"{card} has dealt 3 damage to the first enemy in column {card.column + 1}, and 1 damage to the ally behind it. "
-            if card.faction == 'Shadow': self.log += f"{card} has moved to column {param}, and dealt 1 damage to first enemy in column {param}. "
-
+            elif card.faction == 'Air': self.log += f"{card} has moved to column {param+1} and dealt 1 damage to the first enemy in column {param+1} and the columns adjacent to it. "
+            elif card.faction == 'Ice': self.log += f"{card} has dealt damage to the first enemy in column {card.column + 1}. "
+            elif card.faction == 'Earth': self.log += f"{card} has dealt 2 damage to the first enemy in column {card.column + 1}. "
+            elif card.faction == 'Light': self.log += f"{card} has dealt damage in column {card.column + 1}, and has healed 1 damage to the {param[1]+1}º ally in column {param[0]+1} ({player.columns[param[0]][param[1]]}). "
+            elif card.faction == 'Crystal': self.log += f"{card} has dealt 4 damage to the first enemy in column {card.column + 1}. "
+            elif card.faction == 'Fire': self.log += f"{card} has dealt 3 damage to the first enemy in column {card.column + 1}, and 1 damage to the ally behind it. "
+            elif card.faction == 'Shadow': self.log += f"{card} has moved to column {param+1}, and dealt 1 damage to first enemy in column {param+1}. "
+            # ---- Expansion ----
+            elif card.faction == 'Sand': self.log += f"{card} has moved to column {param+1}, and dealt 1 damage to each enemy in column {param+1}. "
+            elif card.faction == 'Acid': self.log += f"{card} has dealt 3 damage to the first enemy in column {card.column + 1}, and 1 damage to the second enemy. "
+            elif card.faction == 'Magnet': self.log += f"{card} has dealt 2 damage to the last enemy in the column that it was and has moved that enemy and itself to column {param+1}."
+            elif card.faction == 'Love': self.log += f"{card} has dealt 2 damage to the first enemy in column {card.column + 1}."
+            elif card.faction == 'Star': self.log += f"{card} has dealt 2 damage to the first enemy in column {card.column + 1}. [...]"
+            elif card.faction == 'Sound': self.log += f"{card} has dealt 2 damage to the first enemy in column {card.column + 1}. [...]"
+            elif card.faction == 'Lava': self.log += f"{card} has dealt 2 damage to the first enemy in adjacent locations. And 1 damage to itself and each card in front of it."
+            elif card.faction == 'Beast': self.log += f"{card} has moved to column {param+1}, and dealt {'3'*card.isDamaged()}{'2'*(not card.isDamaged())} damage to the first enemy in column {param+1}. "
 
 
 class ShowHandButton(discord.ui.Button):

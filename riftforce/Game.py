@@ -9,16 +9,21 @@ class Game():
     def __init__(self, player1: Player, player2: Player) -> None:
         self.player1: Player = player1
         self.player2: Player = player2
+        self.turn_number = 1
 
         self.link_players()
 
         self.board = Board(self.player1, self.player2)
-        self.isPlayer1Turn = True #True -> player1, False -> player2
+        
+        self.isPlayer1Turn = True
         self.board.place_card(self.player2.deck.list.pop(), 2) #Player 2 gets free elemental placed in the middle column
+        
         self.player1.draw()
         self.player2.draw()
         self.player1.sort_hand()
         self.player2.sort_hand()
+
+
 
     def __str__(self) -> str:
         return f"[Player 1] {self.player1.score[0]} - {self.player2.score[0]} [Player 2]\n{self.board}"
@@ -29,40 +34,36 @@ class Game():
         self.player1.score = self.player2.opponents_score
         self.player1.opponents_score = self.player2.score
 
+    def change_turn(self, debug = True):
+        if not debug:
+            self.isPlayer1Turn = not self.isPlayer1Turn
+        if self.isPlayer1Turn:
+            self.turn_number += 1
+
+    def isFinished(self):
+        if not self.isPlayer1Turn: return False
+        if self.player1.score[0] < 12 and self.player2.score[0] < 12 : return False
+        if self.player1.score[0] == self.player2.score[0]: return False
+        return True
+
+
 class GameTest(Game):
     def __init__(self) -> None:
-        super().__init__(Player(('Earth','Thunderbolt','Fire','Light')), Player({'Crystal', 'Plant', 'Ice', 'Shadow'}))
+        super().__init__(Player(('Earth','Love','Fire','Love')), Player({'Crystal', 'Plant', 'Ice', 'Shadow'}))
 
-        self.board.place_card(Card(5, 'Thunderbolt', self.player1), 0)
-        self.board.place_card(Card(6, 'Thunderbolt', self.player1), 4)
-        self.board.place_card(Card(7, 'Thunderbolt', self.player1), 1)
+        self.board.place_card(Card(6, 'Fire', self.player1), 0)
+        self.board.place_card(Card(6, 'Air', self.player1), 1)
+        self.board.place_card(Card(6, 'Shadow', self.player1), 1)
+        self.board.place_card(Card(6, 'Shadow', self.player1), 2)
+        self.board.place_card(Card(5, 'Air', self.player1), 3)
+        self.board.place_card(Card(5, 'Crystal', self.player1), 4)
 
-        self.board.place_card(Card(5, 'Light', self.player1), 3)
-        self.board.place_card(Card(6, 'Light', self.player1), 1)
-        self.board.place_card(Card(7, 'Light', self.player1), 2)
+        self.board.place_card(Card(5, 'Water', self.player2), 0)
+        self.board.place_card(Card(6, 'Plant', self.player2), 1)
+        self.board.place_card(Card(6, 'Water', self.player2), 1)
+        self.board.place_card(Card(5, 'Earth', self.player2), 1)
+        self.board.place_card(Card(6, 'Thunderbolt', self.player2), 3)
 
-        self.board.place_card(Card(5, 'Fire', self.player1), 4)
-        self.board.place_card(Card(6, 'Fire', self.player1), 3)
-        self.board.place_card(Card(7, 'Fire', self.player1), 0)
-
-        self.board.place_card(Card(5, 'Earth', self.player1), 2)
-        self.board.place_card(Card(6, 'Earth', self.player1), 4)
-        self.board.place_card(Card(7, 'Earth', self.player1), 3)
-
-        self.board.place_card(Card(7, 'Light', self.player1), 1)
-        self.board.place_card(Card(7, 'Fire', self.player1), 1)
-        self.board.place_card(Card(6, 'Shadow', self.player1), 0)
-        self.board.place_card(Card(7, 'Light', self.player1), 2)
-        self.board.place_card(Card(5, 'Fire', self.player1), 3)
-
-        self.board.place_card(Card(5, 'Light', self.player2), 1)
-        self.board.place_card(Card(7, 'Crystal', self.player2), 2)
-        self.board.place_card(Card(5,  'Plant', self.player2), 2)
-        self.board.place_card(Card(7, 'Earth', self.player2), 3)
-        self.board.place_card(Card(5, 'Light', self.player2), 0)
-        self.board.place_card(Card(7, 'Earth', self.player2), 2)
-        self.board.place_card(Card(5,  'Plant', self.player2), 4)
-        self.board.place_card(Card(5, 'Earth', self.player2), 3)
 
         for column in self.board.columns1:
             for card in column:
@@ -70,6 +71,7 @@ class GameTest(Game):
         for column in self.board.columns2:
             for card in column:
                 card.health_left = randint(1,card.health-1)    
+
         
 
 class Draft():
@@ -87,13 +89,4 @@ class Draft():
         factions = self.player1_factions if self.isPlayer1Turn else self.player2_factions
         factions.append(self.factions.pop(i))
         self.isPlayer1Turn = not self.isPlayer1Turn
-
-if __name__ == '__main__':
-    # game = Game(Player(('Light', 'Fire')), Player(('Water', 'Earth')))
-    game = GameTest()
-    # print(str(game))
-    # print(game.player2.controled_factions())
-    
-    # draft = Draft()
-    # print(draft)
 

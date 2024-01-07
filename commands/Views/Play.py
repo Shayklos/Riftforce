@@ -2,11 +2,12 @@ from __future__ import annotations
 import discord
 from discord.enums import ButtonStyle
 from discord.emoji import Emoji
+from discord.interactions import Interaction
 from discord.partial_emoji import PartialEmoji
 
 
 from RiftforceView import RiftforceView
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     from Main import MainView, PlayButton
 from image_manipulation import *
@@ -112,7 +113,7 @@ class CardColumnView(RiftforceView):
     def __init__(self, bot, player, selected_cards, playView, timeout: float | None = 180):
         super().__init__(bot=bot, timeout=timeout)
         self.player: Player = player
-        self.selected_cards = selected_cards
+        self.selected_cards: list[Card] = selected_cards
         self.playView: MainView = playView
         self.columns = []
 
@@ -142,6 +143,11 @@ class CardColumnView(RiftforceView):
 
         self.playView.game.change_turn()
         if self.playView.game.isPlayer1Turn: self.playView.log += self.playView.turn_msg()
+        for card in self.selected_cards:
+            if card.faction == 'Love':
+                await interaction.response.edit_message(content=f"Which card will your Love heal?.", view = LoveView(self))
+                return
+
         await self.playView.update_board()
         await interaction.response.edit_message(content=f"You've chosen {self.selected_cards}.", view = None)
         
@@ -153,3 +159,35 @@ class CardColumnView(RiftforceView):
             if 'Column' in item.label : item.style = discord.ButtonStyle.blurple
         self.columns = []
         await interaction.response.edit_message(view=self)
+
+
+class LoveButton(discord.ui.Button):
+    def __init__(self, card: Card, *, style: ButtonStyle = ButtonStyle.blurple, label: str | None = None, disabled: bool = False, custom_id: str | None = None, url: str | None = None, emoji: str | Emoji | PartialEmoji | None = None, row: int | None = None):
+        super().__init__(style=style, label=f"{card.position + 1} {card}", disabled=disabled, custom_id=custom_id, url=url, emoji=emoji, row=row)
+        self.card = card
+        self.view : LoveView
+    
+    async def callback(self, interaction:discord.Interaction) -> Any:
+        self.card.health_left = self.card.health
+        self.view.columns.pop(0)
+        if self.view.columns:
+            self.view.clear_items()
+            for card in self.view.player.columns[self.view.columns[0]]:
+                self.view.add_item(LoveButton(card))
+            await interaction.response.edit_message(view=self.view)
+        else:
+            await self.view.underlying_view.playView.update_board()
+            await interaction.response.edit_message(content=f"You've chosen {self.view.selected_cards}.", view = None)
+
+
+class LoveView(RiftforceView):
+    def __init__(self, underlying_view: CardColumnView):
+        super().__init__(bot=underlying_view.bot, timeout=underlying_view.timeout)
+        self.underlying_view = underlying_view
+        self.selected_cards: list[Card] = underlying_view.selected_cards
+        self.columns: list[int] = [card.column for card in self.selected_cards if card.faction == 'Love']
+        self.player: Player = underlying_view.player 
+
+        for card in self.player.columns[self.columns[0]]:
+            self.add_item(LoveButton(card))
+    

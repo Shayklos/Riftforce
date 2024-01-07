@@ -56,11 +56,11 @@ class DraftView(RiftforceView):
 
         self.clear_items()
 
-        if len(self.draft.player2_factions) < 1: #should be 4
+        if len(self.draft.player2_factions) < 4: #should be 4
             self.generate_buttons()
         else: #Drafting finished
-            # self.game = Game(Player(self.draft.player1_factions), Player(self.draft.player2_factions))
-            self.game = GameTest()
+            self.game = Game(Player(self.draft.player1_factions), Player(self.draft.player2_factions))
+            # self.game = GameTest()
             self.game.player1.userid = self.player1.id
             self.game.player2.userid = self.player2.id
             self.game.player1.username = self.player1.display_name
