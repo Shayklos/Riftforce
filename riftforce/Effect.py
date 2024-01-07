@@ -26,7 +26,7 @@ class Effect():
         self.owner: Player = self.card.owner
         self.has_killed = False
 
-    def on_placement(self): return 
+    def on_placement(self, param = None): return 
     def on_death(self): self.owner.opponents_score[0] += 1
     def on_kill(self): return
 
@@ -186,6 +186,7 @@ class Thunderbolt(Effect):
         self.damage(2, where = positions[0])
         if self.has_killed:
             self.damage(2, where = positions[1])
+            self.has_killed = False
 
 
 class Ice(Effect):
@@ -215,9 +216,9 @@ class Earth(Effect):
     def __init__(self, card) -> None:
         super().__init__(card)
 
-    def on_placement(self):
+    def on_placement(self, _):
         column = self.owner.columns_opponent[self.card.column]
-        for card in column:
+        for card in reversed(column):
             self.damage(1, where = card.position)
 
     def activate(self, _):
@@ -253,3 +254,164 @@ class Shadow(Effect):
         self.damage(1)
 
     def on_kill(self): self.owner.score[0] += 1
+
+# --------- Riftforce Beyond ---------
+    
+class Beast(Effect):
+    """
+    Move this Beast to an adjacent location
+    If there is damage on this Beast, place 3 damage on the first enemy at this location
+    Otherwise, place 2 damage on it
+    """
+    def __init__(self, card) -> None:
+        super().__init__(card)
+
+    def activate(self, column_destination):
+        assert abs(self.card.column - column_destination) == 1, "Beast didn't move to adjacent position"
+        self.move(column_destination)
+        self.damage(3) if self.card.isDamaged() else self.damage(2)
+
+
+class Sand(Effect):
+    """
+    Move this Sand to any other location
+    Place 1 damage on each enemy at this location
+    Remove 1 damage from this Sand
+    """
+    def __init__(self, card) -> None:
+        super().__init__(card)
+
+    def activate(self, column_destination):
+        assert column_destination != self.card.column, "Sand has to move"
+        self.move(column_destination)
+
+        column = self.owner.columns_opponent[column_destination] 
+        for card in reversed(column):
+            self.damage(1, where = card.position)
+
+        self.heal((self.card.column, self.card.position))
+
+
+class Lava(Effect):
+    """
+    Place 2 damage each on the first enemy at the adjacent locations
+    Place 1 damage each on this Lava and all allies in front of this Lava
+    """
+    def __init__(self, card) -> None:
+        super().__init__(card)
+
+    def activate(self, _):
+        self.damage(2, 1)
+        self.damage(2, -1)
+
+        splash = self.card.position
+        while splash > -1:
+            self.damage(1, where = splash, opponent=False)
+            splash -= 1
+
+
+class Sound(Effect):
+    """
+    Place 2 damage each on the first enemy at this location
+    If the Music destroys this enemy, play it on your side of the Rift at an adjacent location
+    """
+    def __init__(self, card) -> None:
+        super().__init__(card)
+
+    def activate(self, column_destination):
+        #If there are cards (to avoid IndexError) and first card will be killed
+        if len(self.card.owner.columns_opponent[self.card.column]) and self.card.owner.columns_opponent[self.card.column][0].health_left <= 2:
+            #Get card data and then place it on your board
+            stolen_card: Card = self.card.owner.columns_opponent[self.card.column].pop(0)
+            stolen_card.health_left = stolen_card.health
+            stolen_card.owner = self.card.owner
+            stolen_card.owner.play([stolen_card], [column_destination])
+        else:
+            self.damage(2)
+
+
+class Acid(Effect):
+    """
+    Place 3 damage on the first enemy at this location
+    Place 1 damage on the second enemy at this location
+    If this Acid destroys an enemy gain no Riftforce
+    Aclaration: If the first 3 damage kill the enemy, the 1 damage will kill the now-second, before third, card
+    """
+    def __init__(self, card) -> None:
+        super().__init__(card)
+
+    def activate(self, _):
+        #Make sure the score before and after damaging is the same
+        current_score = self.owner.score[0]
+        self.damage(3)
+        if self.has_killed:
+            self.damage(1)
+        else:
+            self.damage(1, where = 1)
+        self.has_killed = False
+        self.owner.score[0] = current_score
+
+
+class Star(Effect):
+    """
+    Place 2 damage on the first enemy at this location
+    If you have less than 7 elementals in your hand, draw 1 elemental
+    """
+    def __init__(self, card) -> None:
+        super().__init__(card)
+
+    def activate(self, _):
+        self.damage(2)
+        if len(self.owner.hand) < 7:
+            if len(self.owner.deck.list):
+                self.owner.hand.append(self.owner.deck.list.pop(0))
+            else:
+                self.owner.deck.list = self.owner.discard_pile
+                self.owner.deck.shuffle()
+
+                self.owner.discard_pile = []
+
+
+class Love(Effect):
+    """
+    When you play this Love, remove all dammage from one ally at this location
+    Place 2 damage on the first enemy at this location
+    """
+    def __init__(self, card) -> None:
+        super().__init__(card)
+
+    def activate(self, _):
+        self.damage(2)
+
+    def on_placement(self, card_position_to_heal):
+        self.heal((self.card.column, card_position_to_heal), amount = 99)
+
+
+class Magnet(Effect):
+    """
+    Place 2 damage on the last enemy at this location
+    Move this enemy and this Magnet to and adjacent location 
+    Aclaration: Magnet cannot stay in the same location
+    """
+    def __init__(self, card) -> None:
+        super().__init__(card)
+
+    def activate(self, column_destination):
+        assert abs(self.card.column - column_destination) == 1, "Magnet didn't move to adjacent position"
+
+        try:
+            card_to_be_damaged: Card = self.owner.columns_opponent[self.card.column][-1]
+        except:
+            logging.warning(Fore.YELLOW + f"{self.card} activated but didn't find anyone to damage. column: {self.card.column}" + Fore.WHITE)
+            self.move(column_destination)
+            return 
+
+        if card_to_be_damaged.health_left <= 2:
+            self.damage(2, where = len(self.owner.columns_opponent[self.card.column])-1)
+            self.move(column_destination)
+
+        else:
+            self.damage(2, where = len(self.owner.columns_opponent[self.card.column])-1)
+            self.move(column_destination)
+            self.move(column_destination, (card_to_be_damaged.column, card_to_be_damaged.position), own_card=False)
+        

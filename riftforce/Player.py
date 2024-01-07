@@ -30,7 +30,14 @@ class Player():
 
     def draw(self):
         while len(self.hand) < 7:
-            self.hand.append(self.deck.list.pop(0))
+            if len(self.deck.list):
+                self.hand.append(self.deck.list.pop(0))
+
+            else:
+                self.deck.list = self.discard_pile
+                self.deck.shuffle()
+
+                self.discard_pile = []
 
     def sort_hand(self):
         self.hand.sort(key = lambda card : (card.health, card.faction))
@@ -65,16 +72,19 @@ class Player():
 
         return True
 
-    def play(self, cards: list[Card], placements: list):
+    def play(self, cards: list[Card], placements: list, on_placement_parameters = None):
         logging.debug(Fore.MAGENTA + str(self.columns_opponent) + Fore.WHITE)
         if not self.play_placements_are_correct(cards, placements):
             raise Exception("Wrong play")
 
-        for card, placement in zip(cards, placements):
+        if on_placement_parameters is None:
+            on_placement_parameters = [None]*len(cards)
+            
+        for card, placement, parameter in zip(cards, placements, on_placement_parameters):
             card.position = len(self.columns[placement])
             card.column = placement
             self.columns[placement].append(card)
-            card.on_placement()
+            card.on_placement(parameter)
 
     def discard_from_hand(self, cards):
         for card in cards:

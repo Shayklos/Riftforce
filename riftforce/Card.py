@@ -15,7 +15,16 @@ FACTION_EMOJI = {'Water' : '💧',
                  'Light':'💡',
                  'Crystal':'💎',
                  'Fire':'🔥',
-                 'Shadow':'🌑'
+                 'Shadow':'🌑',
+                 'Beast':'🐺',
+                 'Sand':'⏳',
+                 'Lava':'🌋',
+                 'Sound':'🎶',
+                 'Acid':'💀',
+                 'Love':'💜',
+                 'Star':'🌠',
+                 'Magnet':'🧲'
+
 }
 FACTIONS = list(FACTION_EMOJI.keys())
 
@@ -75,9 +84,17 @@ class Card():
             case 'Earth': effect = Earth
             case 'Crystal': effect = Crystal
             case 'Shadow': effect = Shadow
+            case 'Beast': effect = Beast
+            case 'Sand': effect = Sand
+            case 'Lava': effect = Lava
+            case 'Sound': effect = Sound
+            case 'Acid': effect = Acid
+            case 'Love': effect = Love
+            case 'Star': effect = Star
+            case 'Magnet': effect = Magnet
         return effect(self)
 
     def activate(self, specific_parameters = None): self.effect.activate(specific_parameters)
-    def on_placement(self): self.effect.on_placement()
+    def on_placement(self, param = None): self.effect.on_placement(param)
     def on_death(self): self.effect.on_death()
     def on_kill(self): self.effect.on_kill()

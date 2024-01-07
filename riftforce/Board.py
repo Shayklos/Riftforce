@@ -35,5 +35,5 @@ class Board():
             s += '\n'
         return s
 
-    def place_card(self, card: Card, column):
-        card.owner.play([card], [column])
+    def place_card(self, card: Card, column, place_param = None):
+        card.owner.play([card], [column], [place_param])
