@@ -16,11 +16,13 @@ directory = "files/imgs/Original/"
 dmg1 = Img.open(directory + 'dmg1.png')
 dmg3 = Img.open(directory + 'dmg3.png')
 
-reducer = 1.5
+reducer = 2.25 # manually set this until it looks nice
 dmg1 = dmg1.resize((round(dmg1.width/reducer), round(dmg1.width/reducer)))
 dmg3 = dmg3.resize((round(dmg3.width/reducer), round(dmg3.width/reducer)))
 
 background_color = (49, 51, 56) #This is Discord's default dark mode background color
+
+card_width = Img.open("files/imgs/Original/Air5.png").width
 
 def damage_tokens(card_img: Img, amount) -> Img:
     match amount:
@@ -79,7 +81,7 @@ def createImgHand(cards: list[Card], handIMG_width = 2000, extension = ".png", s
 
 def columnImg(column: list[Card], extension = '.png') -> Img:
     if len(column) == 0:
-        return Img.new('RGBA', (750, 1),background_color)
+        return Img.new('RGBA', (card_width, 1),background_color)
         
     imgs = []
     for card in column:
@@ -119,7 +121,7 @@ def columnsImg(columns, flip = False) -> Img:
 
     for img in iterator:
         if img is None:
-            width_moved += 750
+            width_moved += card_width
         columns_IMG.paste(img, (width_moved, 0), img)
         width_moved += img.width
 
@@ -127,9 +129,12 @@ def columnsImg(columns, flip = False) -> Img:
 
 def boardImg(board: Board, separation = 100) -> Img:
     columns1 = columnsImg(board.columns1)
+    # columns1.show()
     columns2 = columnsImg(board.columns2, flip = True)
+    # columns2.show()
     board_img = Img.new('RGBA', (columns1.width, columns1.height + columns2.height + separation), background_color)
     board_img.paste(columns2, (0, columns1.height + separation), columns2)
+    # board_img.show()
     board_img = board_img.rotate(180)
     board_img.paste(columns1, (0, columns2.height + separation),columns1)
     return board_img.convert('RGB')
