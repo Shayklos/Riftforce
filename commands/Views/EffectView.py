@@ -177,6 +177,7 @@ class View(RiftforceView):
             self.underlying_view.playView.activate_log(player, self.underlying_view.reference_card, self.underlying_view.selected_cards, self.underlying_view.card_parameters)
             player.activate_and_discard(self.underlying_view.reference_card, self.underlying_view.selected_cards, self.underlying_view.card_parameters)
             game.change_turn()
+            if self.underlying_view.playView.game.isPlayer1Turn: self.underlying_view.playView.log += self.underlying_view.playView.turn_msg()
             await interaction.response.edit_message(content = "Done!", view = None)
             await self.underlying_view.playView.update_board()
             return 
