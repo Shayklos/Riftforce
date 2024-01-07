@@ -266,7 +266,6 @@ class ComplexViewConfirmButton(discord.ui.Button):
             await interaction.response.edit_message(view=None)
             await self.view.playView.update_board()
             return
-        print('before checks')
         if self.view.fire_and_lava_check(player, self.view.selected_cards):
             self.view.cards_with_effects = list(filter(
                 lambda a: not self.view.has_no_effect[self.view.selected_cards.index(a)], 
