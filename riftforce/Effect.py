@@ -94,6 +94,10 @@ class Effect():
         columns[column_destination].append(card)
         logging.info(Fore.GREEN + f"MOVIMIENTO {self.card}: column_destination: {column_destination}, card_placement: {card_placement}, own_card: {own_card}, switch: {switch}" + Fore.WHITE)
         
+        #Update card placement of cards in the old column
+        for other_card_in_column in columns[card.column][card.position:]:
+            other_card_in_column.position -= 1
+
         #Update card placement
         card.column = column_destination
         card.position = len(columns[column_destination]) - 1 

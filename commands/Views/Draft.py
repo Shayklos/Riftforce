@@ -29,7 +29,7 @@ class DraftButton(discord.ui.Button):
 class DraftView(RiftforceView):
     #TODO: interaction_check to ensure player2 doesnt choose player1 factions
     def __init__(self, bot, draft: Draft, player1, player2, p1msg, dmsg, p2msg):
-        super().__init__(bot = bot, timeout=180)
+        super().__init__(bot = bot, timeout=1800)
         self.proposingPlayer = 0
         self.draft = draft
         self.player1: discord.User = player1

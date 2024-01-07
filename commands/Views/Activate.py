@@ -154,9 +154,7 @@ class SimpleView(RiftforceView):
             await interaction.response.edit_message(view=None)
             await self.playView.update_board()
             return
-        print('before checks')
         if self.fire_and_lava_check(player, self.selected_cards):
-            print('passed checks')
             self.cards_with_effects = list(filter(
                 lambda a: not self.has_no_effect[self.selected_cards.index(a)], 
                 self.selected_cards))

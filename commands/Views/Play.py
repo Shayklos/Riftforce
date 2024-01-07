@@ -138,7 +138,7 @@ class CardColumnView(RiftforceView):
 
         self.playView.log += f"\n{self.player.username} has **played** cards: "
         for card, column in zip(self.selected_cards, self.columns):
-            self.playView.log += f"{card} in column {column}, "
+            self.playView.log += f"{card} in column {column + 1}, "
         self.playView.log = self.playView.log[:-2] + "."
 
         self.playView.game.change_turn()
@@ -147,7 +147,6 @@ class CardColumnView(RiftforceView):
             if card.faction == 'Love':
                 await interaction.response.edit_message(content=f"Which card will your Love heal?.", view = LoveView(self))
                 return
-
         await self.playView.update_board()
         await interaction.response.edit_message(content=f"You've chosen {self.selected_cards}.", view = None)
         

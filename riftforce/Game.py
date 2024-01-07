@@ -26,7 +26,7 @@ class Game():
 
 
     def __str__(self) -> str:
-        return f"[Player 1] {self.player1.score[0]} - {self.player2.score[0]} [Player 2]\n{self.board}"
+        return f"[{self.turn_number}][Player 1] {self.player1.score[0]} - {self.player2.score[0]} [Player 2]\n{self.board}"
 
     def link_players(self):
         self.player1.columns = self.player2.columns_opponent
@@ -34,7 +34,7 @@ class Game():
         self.player1.score = self.player2.opponents_score
         self.player1.opponents_score = self.player2.score
 
-    def change_turn(self, debug = True):
+    def change_turn(self, debug = False):
         if not debug:
             self.isPlayer1Turn = not self.isPlayer1Turn
         if self.isPlayer1Turn:
@@ -49,28 +49,30 @@ class Game():
 
 class GameTest(Game):
     def __init__(self) -> None:
-        super().__init__(Player(('Earth','Love','Fire','Love')), Player({'Crystal', 'Plant', 'Ice', 'Shadow'}))
+        super().__init__(Player(('Crystal','Love','Magnet','Water')), Player({'Acid', 'Beast', 'Sound', 'Earth'}))
 
-        self.board.place_card(Card(6, 'Fire', self.player1), 0)
-        self.board.place_card(Card(6, 'Air', self.player1), 1)
-        self.board.place_card(Card(6, 'Shadow', self.player1), 1)
-        self.board.place_card(Card(6, 'Shadow', self.player1), 2)
-        self.board.place_card(Card(5, 'Air', self.player1), 3)
-        self.board.place_card(Card(5, 'Crystal', self.player1), 4)
+        self.board.place_card(Card(6, 'Love', self.player1), 0)
+        self.board.place_card(Card(5, 'Crystal', self.player1), 1)
+        self.board.place_card(Card(6, 'Water', self.player1), 1)
+        self.board.place_card(Card(5, 'Magnet', self.player1), 2)
+        self.board.place_card(Card(6, 'Water', self.player1), 2)
+        self.board.place_card(Card(5, 'Crystal', self.player1), 3)
 
-        self.board.place_card(Card(5, 'Water', self.player2), 0)
-        self.board.place_card(Card(6, 'Plant', self.player2), 1)
-        self.board.place_card(Card(6, 'Water', self.player2), 1)
-        self.board.place_card(Card(5, 'Earth', self.player2), 1)
-        self.board.place_card(Card(6, 'Thunderbolt', self.player2), 3)
+        self.board.place_card(Card(7, 'Acid', self.player2), 0)
+        self.board.place_card(Card(5, 'Beast', self.player2), 1)
+        self.board.place_card(Card(7, 'Earth', self.player2), 1)
+
+        self.board.place_card(Card(5, 'Beast', self.player2), 2)
+        self.board.place_card(Card(5, 'Sound', self.player2), 2)
+        self.board.place_card(Card(7, 'Beast', self.player2), 3)
 
 
-        for column in self.board.columns1:
-            for card in column:
-                card.health_left = randint(1,card.health-1)
-        for column in self.board.columns2:
-            for card in column:
-                card.health_left = randint(1,card.health-1)    
+        # for column in self.board.columns1:
+        #     for card in column:
+        #         card.health_left = randint(1,card.health-1)
+        # for column in self.board.columns2:
+        #     for card in column:
+        #         card.health_left = randint(1,card.health-1)    
 
         
 

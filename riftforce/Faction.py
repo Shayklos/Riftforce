@@ -10,7 +10,10 @@ class Faction():
     NUM_HIGH = 2
 
     def __init__(self, faction, owner) -> None:
-        self.cards =  Faction.NUM_LOW*[Card(Faction.HEALTH_LOW, faction, owner)]\
-                    + Faction.NUM_MID*[Card(Faction.HEALTH_MID, faction, owner)]\
-                    + Faction.NUM_HIGH*[Card(Faction.HEALTH_HIGH, faction, owner)]                 
-
+        self.cards = []
+        for _ in range(Faction.NUM_LOW):
+            self.cards.append(Card(Faction.HEALTH_LOW, faction, owner))
+        for _ in range(Faction.NUM_MID):
+            self.cards.append(Card(Faction.HEALTH_MID, faction, owner))
+        for _ in range(Faction.NUM_HIGH):
+            self.cards.append(Card(Faction.HEALTH_HIGH, faction, owner))

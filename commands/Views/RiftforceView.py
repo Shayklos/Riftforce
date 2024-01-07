@@ -2,7 +2,7 @@ import discord
 
 #TODO asyncio.to_thread for PIL logic
 class RiftforceView(discord.ui.View):
-    def __init__(self, *, bot, timeout: float | None = 180):
+    def __init__(self, *, bot, timeout: float | None = 1800):
         super().__init__(timeout=timeout)
         self.bot = bot
 

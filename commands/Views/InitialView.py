@@ -9,7 +9,7 @@ from image_manipulation import *
 
 class InitialView(RiftforceView):
     def __init__(self, bot, author):
-        super().__init__(bot = bot, timeout=180)
+        super().__init__(bot = bot, timeout=1800)
         self.bot: commands.Bot = bot
         self.proposingPlayer: discord.User = author
 

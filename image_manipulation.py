@@ -61,9 +61,8 @@ def createImgHand(cards: list[Card], handIMG_width = 2000, extension = ".png", s
     height = max([img.height for img in imgs])
 
     if len(imgs) == 1:
-        imgs[0].save(save_dir, transparency = 0)
         logging.debug(Fore.MAGENTA + f"Saved hand of size {len(imgs)}: {round(getsize(save_dir)/1024)} KB" + Fore.WHITE)
-        return
+        return imgs[0]
 
     if len(imgs) == 2:
         handIMG_width = imgs[0].width + imgs[1].width

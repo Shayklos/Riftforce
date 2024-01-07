@@ -29,6 +29,7 @@ class MainView(RiftforceView):
         self.add_item(CheckAndDrawButton(label = "Check & draw", row = 1))
 
     async def update_board(self, log = ""):
+        print(self.game)
         board_img = boardImg(self.game.board)
         name = self.game.player1.username if self.game.isPlayer1Turn else self.game.player2.username
         self.log += f"{log}\nIt's the turn of {name}."
@@ -53,6 +54,7 @@ class MainView(RiftforceView):
     def activate_log(self, player, reference_card, selected_cards: list[Card], card_parameters):
         self.log += f"\n{player.username} has discarded {reference_card} and **activated** cards: "
         for card, param in zip(selected_cards, card_parameters):
+            print(card, param)
             if card.faction == 'Water': self.log += f"{card} has dealt 2 damage to first enemy in column {card.column + 1}, moved to column {param+1}, and dealt 1 damage to first enemy in column {param+1}. "
             elif card.faction == 'Plant': self.log += f"{card} has dealt 2 damage to the first enemy in column {param+1} and moved that enemy to column {card.column + 1}. "
             elif card.faction == 'Thunderbolt': 
@@ -193,5 +195,6 @@ class CheckAndDrawButton(discord.ui.Button):
         player.sort_hand()
         player.score[0] += player.controled_factions()
         self.view.log += f"\n{player.username} has **checked and drawn**. {player.username} gained {player.controled_factions()} points."
+        self.view.game.change_turn()
         await self.view.msg.edit(content = self.view.log[-2000:])
         await interaction.followup.send(content = f"You gained {player.controled_factions()} points.", ephemeral=True)
