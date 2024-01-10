@@ -19,9 +19,11 @@ class CardSelectConfirm(discord.ui.Button):
 
     async def callback(self, interaction: discord.Interaction):
         self.view : CardSelectView
+        view = CardColumnView(self.view.bot, self.view.player, self.view.selected_cards, self.view.playView)
+        view.index = 0
         await interaction.response.edit_message(
-            content= f"You've chosen {self.view.selected_cards}. Where are you placing {self.view.selected_cards[0]}?", 
-            view=CardColumnView(self.view.bot, self.view.player, self.view.selected_cards, self.view.playView))
+            content= f"You've chosen {self.view.selected_cards}. Where are you placing {self.view.selected_cards[view.index]}?", 
+            view=view)
 
 class CardSelectCancel(discord.ui.Button):
     def __init__(self, *, style: ButtonStyle = ButtonStyle.secondary, label: str | None = None, disabled: bool = False, custom_id: str | None = None, url: str | None = None, emoji: str | Emoji | PartialEmoji | None = None, row: int | None = None):
@@ -97,7 +99,15 @@ class CardColumnButton(discord.ui.Button):
             for item in self.view.children:
                 if 'Column' in item.label and item.column - self.column > 2:
                     item.disabled = True
-            await interaction.response.edit_message(view=self.view)
+            
+            if len(self.view.selected_cards) > len(self.view.columns):
+                await interaction.response.edit_message(content = f'Where are you placing {self.view.selected_cards[len(self.view.columns)]}?', view=self.view)
+            else:
+                content = "You're placing "
+                for card, column in zip(self.view.selected_cards, self.view.columns):
+                    content += f"{card} in column {column + 1}, "
+                content = content[:-2] + '. Is this correct?'
+                await interaction.response.edit_message(content = content, view=self.view)
             return
         
         for item in self.view.children:
@@ -107,7 +117,16 @@ class CardColumnButton(discord.ui.Button):
                 if not self.view.isColumnCompatible(item.column):
                     item.disabled = True
 
-        await interaction.response.edit_message(view=self.view)
+
+        if len(self.view.selected_cards) > len(self.view.columns):
+                await interaction.response.edit_message(content = f'Where are you placing {self.view.selected_cards[len(self.view.columns)]}?', view=self.view)
+        else:
+            content = "You're placing "
+            for card, column in zip(self.view.selected_cards, self.view.columns):
+                content += f"{card} in column {column + 1}, "
+            content = content[:-2] + '. Is this correct?'
+            await interaction.response.edit_message(content=content, view=self.view)
+        return
 
 class CardColumnView(RiftforceView):
     def __init__(self, bot, player, selected_cards, playView, timeout: float | None = 180):
