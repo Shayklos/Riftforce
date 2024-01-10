@@ -2,7 +2,7 @@
 
 Discord bot that allows playing the 2-player mode of playing Riftforce. To learn to play Riftforce you can read [the Riftforce Rulebook](files/Rulebook.pdf) and after that, [the Riftforce Beyond Rulebook](files/Rulebook%20Expansion.pdf), which is Riftforce's expansion.
 
-![](files/imgs/showcase.png)
+![This is a generated board, but this could be a real position. Not on turn 1 tho.](files/imgs/showcase.png)
 
 ## Features
 
@@ -26,7 +26,7 @@ DISCORD_GUILD_ID= 0
 3. Run `bot.py`. 
 4. Write in a text-channel accesible by the bot the `/sync`.
 5. After the commands have synced to your server, you should be able to play using the application command `/play`.
-. Let the second player click the button that will appear, and start playing.
+6. Let the second player click the button that will appear, and start playing.
   
 ## Create a custom faction
 
