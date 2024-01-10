@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 FACTION_EMOJI = {'Water' : '💧',
                  'Plant':'🍀',
                  'Thunderbolt' :'⚡',
-                 'Air': '☁',
+                 'Air': '🌪',
                  'Ice':'❄',
                  'Earth':'✊🏾',
                  'Light':'💡',
