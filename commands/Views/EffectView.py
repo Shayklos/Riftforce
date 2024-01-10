@@ -19,7 +19,7 @@ FACTIONS_THAT_MOVE = ('Water', 'Plant', 'Beast', 'Magnet', 'Sound',
 
 FACTIONS_THAT_MOVE_ADJACENT = ('Water', 'Plant', 'Beast', 'Magnet', 'Sound')
 FACTIONS_THAT_MOVE_ANYWHERE = ('Air', 'Shadow', 'Sand')
-FACTIONS_WITH_NO_CUSTOM_EFFECT = ('Crystal', 'Earth', 'Fire', 'Ice', 'Lava', 'Acid', 'Star')
+FACTIONS_WITH_NO_CUSTOM_EFFECT = ('Crystal', 'Earth', 'Fire', 'Ice', 'Lava', 'Acid', 'Star', 'Love')
 
 
 
