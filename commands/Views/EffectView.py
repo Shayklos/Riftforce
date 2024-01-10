@@ -127,7 +127,6 @@ class View(RiftforceView):
         if card.faction in FACTIONS_THAT_MOVE: self.add_buttons_moving_card(card)
         elif card.faction == 'Thunderbolt' : self.add_buttons_thunderbolt(card) 
         elif card.faction == 'Light' : self.add_buttons_light() 
-        elif card.faction == 'Love' : pass #TODO
             
   
     def add_buttons_moving_card(self, card: Card):
@@ -224,4 +223,3 @@ class View(RiftforceView):
             case 'Plant': return "To witch column will this Plant attack?"
             case 'Light': return "Which elemental will this Light heal?"
             case 'Thunderbolt': return "Which elemental will this Thunderbolt hit?"
-            case 'Love': return "Which elemental will this Love heal?"
