@@ -126,16 +126,20 @@ def columnsImg(columns, flip = False) -> Img:
 
     return columns_IMG
 
-def boardImg(board: Board, separation = 100) -> Img:
-    columns1 = columnsImg(board.columns1)
+def boardImg(board: Board, separation = 100, flip = False) -> Img:
+
+    columns1 = board.columns2 if flip else board.columns1
+    columns2 = board.columns1 if flip else board.columns2
+
+    columns1img = columnsImg(columns1)
     # columns1.show()
-    columns2 = columnsImg(board.columns2, flip = True)
+    columns2img = columnsImg(columns2, flip = True)
     # columns2.show()
-    board_img = Img.new('RGBA', (columns1.width, columns1.height + columns2.height + separation), background_color)
-    board_img.paste(columns2, (0, columns1.height + separation), columns2)
+    board_img = Img.new('RGBA', (columns1img.width, columns1img.height + columns2img.height + separation), background_color)
+    board_img.paste(columns2img, (0, columns1img.height + separation), columns2img)
     # board_img.show()
     board_img = board_img.rotate(180)
-    board_img.paste(columns1, (0, columns2.height + separation),columns1)
+    board_img.paste(columns1img, (0, columns2img.height + separation),columns1img)
     return board_img.convert('RGB')
 
 def draftImg(draft: Draft, extension = '.png', separation = 100) -> Img:

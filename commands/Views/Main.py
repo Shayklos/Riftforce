@@ -24,6 +24,7 @@ class MainView(RiftforceView):
         self.game.player2.username : str
         self.log = self.turn_msg(n = False)
         self.add_item(ShowHandButton(label='Show my hand', row = 0))
+        self.add_item(ShowPlayer2PerspectiveButton(label=f'Show from {self.game.player2.username} perspective', row = 0))
         self.add_item(PlayButton(label = "Play", row = 1))
         self.add_item(ActivateButton(label = "Activate", row = 1))
         self.add_item(CheckAndDrawButton(label = "Check & draw", row = 1))
@@ -104,8 +105,21 @@ class ShowHandButton(discord.ui.Button):
             hand_img.save(a, 'JPEG')
             a.seek(0)
             await interaction.followup.send(content = f"Your cards! Your opponent has **{n_cards_opponent}** cards.", 
-                                file= discord.File(a, filename = "e.jpg"),
+                                file= discord.File(a, filename = f"board_turn_{self.view.game.turn_number}.jpg"),
                                 ephemeral=True)
+
+class ShowPlayer2PerspectiveButton(discord.ui.Button):
+    async def callback(self, interaction: discord.Interaction):
+        self.view: MainView
+        await interaction.response.defer(ephemeral=True)
+        board_img = boardImg(self.view.game.board, flip=True)
+        with io.BytesIO() as a:
+            board_img.save(a, 'JPEG')
+            a.seek(0)
+            await interaction.followup.send(content = f"Board from player 2 perspective.", 
+                                file= discord.File(a, filename = f"board_turn_{self.view.game.turn_number}.jpg"),
+                                ephemeral=True)
+
 
 class PlayButton(discord.ui.Button):
     async def callback(self, interaction: discord.Interaction):
