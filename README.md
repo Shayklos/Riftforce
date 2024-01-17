@@ -11,9 +11,16 @@ Discord bot that allows playing the 2-player mode of playing Riftforce. To learn
 - A working console version of the 2-player mode of Riftorce and Riftorce Beyond.
 - A fully featured Discord bot that prevents illegal plays.
 
-## How to use
+## Requirements
 
-First note that this repository does not contain illustrations. You will need to get these on your own and add them into `files/imgs/Original`. Refer to [Illustrations should go here.txt](files/imgs/Original/Illustrations%20should%20go%20here.txt) for instructions on the images.
+- `discord.py` module
+- `python-dotenv` module (optionally you could hardcode Discord's bot token and guild id)
+- `colorama` module (optionally you could erase every line that contains "logging.")
+
+Additionally, note that this repository does not contain illustrations. You will need to get these on your own and add them into `files/imgs/Original`. Refer to [Illustrations should go here.txt](files/imgs/Original/Illustrations%20should%20go%20here.txt) for instructions on the images.
+
+
+## How to use
 
 1. Create your [own Discord bot](https://discord.com/developers/applications) and invite it to your server.
 2. In the root folder, create a `.env` file,and write in it:
